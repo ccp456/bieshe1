@@ -1,9 +1,9 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 // 实例化数据模型
 const UserSchema = new Schema({
-  name: {
+  username: {
     type: String,
     required: true
   },
@@ -13,4 +13,4 @@ const UserSchema = new Schema({
   }
 })
 
-module.exports = User = mongoose.model("users", UserSchema)
+module.exports = mongoose.model('users', UserSchema)

@@ -1,0 +1,9 @@
+.el-menu{
+  border-right: 0;
+}
+.el-submenu__title i, .el-menu-item i{
+  color: unset
+}
+.el-menu-item.is-active{
+color: #f6c555
+}

@@ -5,19 +5,13 @@
                :model="loginForm"
                ref="loginForm"
                label-position="left">
-        <div style="text-align: center">
-          <svg-icon icon-class="login-mall" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
-        </div>
-        <h2 class="login-title color-main">mall-admin-web</h2>
+        <h2 class="login-title color-main">营销渠道管理</h2>
         <el-form-item prop="username">
           <el-input name="username"
                     type="text"
                     v-model="loginForm.username"
                     autoComplete="on"
                     placeholder="请输入用户名">
-          <span slot="prefix">
-            <svg-icon icon-class="user" class="color-main"></svg-icon>
-          </span>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -27,12 +21,6 @@
                     v-model="loginForm.password"
                     autoComplete="on"
                     placeholder="请输入密码">
-          <span slot="prefix">
-            <svg-icon icon-class="password" class="color-main"></svg-icon>
-          </span>
-            <span slot="suffix" @click="showPwd">
-            <svg-icon icon-class="eye" class="color-main"></svg-icon>
-          </span>
           </el-input>
         </el-form-item>
         <el-form-item style="margin-bottom: 60px">
@@ -42,12 +30,11 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <img :src="login_center_bg" class="login-center-layout">
   </div>
 </template>
 
 <script>
-import loginCenterBg from '@/assets/images/login_center_bg.png'
+import { loginApi } from '@/api/login'
 
 export default {
   name: 'login',
@@ -58,28 +45,26 @@ export default {
         password: '123456'
       },
       loading: false,
-      pwdType: 'password',
-      loginCenterBg
+      pwdType: 'password'
     }
   },
   methods: {
-    showPwd () {
-      if (this.pwdType === 'password') {
-        this.pwdType = ''
-      } else {
-        this.pwdType = 'password'
-      }
-    },
     handleLogin () {
-      this.$refs.loginForm.validate(valid => {
-        this.loading = true
-        this.$store.dispatch('Login', this.loginForm).then(() => {
+      let loginForm = this.loginForm
+      loginApi
+        .login(loginForm)
+        .then(response => {
           this.loading = false
-          this.$router.push({path: '/'})
-        }).catch(() => {
+          if (response.data.token) {
+            this.$router.push({path: '/home'})
+          } else {
+            this.$message.error('密码错误')
+          }
+        })
+        .catch(error => {
+          if (error) this.$message.error('连接失败')
           this.loading = false
         })
-      })
     }
   }
 }
