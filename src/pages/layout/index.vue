@@ -1,7 +1,7 @@
 <template>
 	<div class="manage_page fillcontain">
-		<el-row style="min-height:900px; ">
-	  		<el-col :span="4"  style="min-height: 1000px; background-color: #d05a6e;">
+		<el-row style="height:100%; ">
+	  		<el-col :span="4"  style="height: 100%; background-color: #d05a6e;">
 				<el-menu background-color="#d05a6e" text-color="#fff" :default-active="defaultActive" style="min-height: 100%;" theme="dark" router>
 					<el-menu-item index="home"><i class="el-icon-menu"></i>影院总览</el-menu-item>
 					<el-submenu index="2">

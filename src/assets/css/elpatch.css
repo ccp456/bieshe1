@@ -7,3 +7,12 @@
 .el-menu-item.is-active{
 color: #f6c555
 }
+.manage_page .el-submenu__title, .el-menu-item{
+  font-size: 16px;
+}
+.el-tabs__active-bar,.el-tabs__active-bar,.el-tabs__item.is-active,.el-tabs__item:hover{
+  color: #e16b8c;
+}
+.el-tabs__active-bar{
+  background-color: #e16b8c
+}

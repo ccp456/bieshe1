@@ -1,0 +1,16 @@
+.newmovie{
+  grid-row: 2/4
+}
+.audience{
+  grid-column: 2/4
+}
+.chart{
+  grid-row: 2/4;
+  grid-column: 2/4
+}
+.news-title{
+  display: block;
+  text-overflow:ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
