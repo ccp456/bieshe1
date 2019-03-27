@@ -5,10 +5,9 @@
     <div class="news card">
       <el-tabs v-model="news">
         <el-tab-pane label="影评" name="new">
-          <a class="news-title" href="#">【漏洞预警】Jenkins Script Security Plugin Sandbox再次被绕过漏洞</a>
-          <a class="news-title" href="#">【漏洞预警】Jenkins Script Security Plugin Sandbox再次被绕过漏洞</a>
-          <a class="news-title" href="#">【漏洞预警】Jenkins Script Security Plugin Sandbox再次被绕过漏洞</a>
-          <a class="news-title" href="#">【漏洞预警】Jenkins Script Security Plugin Sandbox再次被绕过漏洞</a>
+          <div class="news-title" v-for="review in reviews">
+            <a :href="review.href">{{ review.title }}</a>
+          </div>
           <a class="more" href="#">更多</a>
         </el-tab-pane>
         <el-tab-pane label="国内电影" name="update">
@@ -52,13 +51,15 @@
 </template>
 <script>
 import headTop from '@/components/headtop'
-import '@/api/home'
+import { crawApi } from '@/api/home'
 
 export default {
   data() {
     return {
       newmovie: 'newmovie',
-      news: 'new'
+      news: 'new',
+      reviews: [
+      ]
     }
   },
   components: {
@@ -66,14 +67,13 @@ export default {
   },
   methods: {
   },
-  beforecreated: {
-    craw() {
-      crawApi.getReview().then(response => {
-        console.log(response)
-      }).catch(error => {
-        console.error
-      })
-    }
+  created() {
+    crawApi.getReview().then(response => {
+      console.log(response)
+      this.reviews = response.data
+    }).catch(error => {
+      console.error
+    })
   }
 }
 

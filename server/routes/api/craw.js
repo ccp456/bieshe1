@@ -34,7 +34,7 @@ router.get('/review', async (ctx, next) => {
       })
       items = []
       $('.excerpt-c5 h2 a').each(function (idx, element) {
-        if (idx <= 4) {
+        if (idx <= 3) {
           let $element = $(element)
           items.push({
             title: $element.text(),
