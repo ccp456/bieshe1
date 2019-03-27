@@ -8,6 +8,15 @@
   grid-row: 2/4;
   grid-column: 2/4
 }
+.audience .item{
+  text-align: center;
+  width: 30%;
+  float: left;
+  margin-right: 10px;
+}
+.news .news-title{
+  padding: 5px 0px;
+}
 .news-title{
   display: block;
   text-overflow:ellipsis;

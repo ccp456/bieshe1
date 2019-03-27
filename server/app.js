@@ -3,12 +3,14 @@ const Router = require('koa-router')
 const mongoose = require('mongoose')
 const cors = require('koa2-cors')
 const bodyParser = require('koa-bodyparser')
+const cheerio = require('cheerio')
+const superagent = require('superagent')
 
 // 实例化
 const app = new Koa()
 const router = new Router()
 
-app.use(bodyParser())
+app.use(bodyParser(), cheerio, superagent)
 
 // 跨域
 app.use(cors({
@@ -27,6 +29,7 @@ app.use(cors({
 
 // 引入
 const users = require('./routes/api/users')
+const craw = require('./routes/api/craw')
 
 // 路由
 router.get('/', async ctx => {
@@ -51,6 +54,7 @@ mongoose
 
 // 配置地址
 router.use('/api/users', users)
+router.use('/api/craw', craw)
 
 // 配置
 app.use(router.routes()).use(router.allowedMethods())
