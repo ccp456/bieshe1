@@ -30,6 +30,7 @@ app.use(cors({
 // 引入
 const users = require('./routes/api/users')
 const craw = require('./routes/api/craw')
+const watch = require('./routes/api/watch')
 
 // 路由
 router.get('/', async ctx => {
@@ -55,6 +56,7 @@ mongoose
 // 配置地址
 router.use('/api/users', users)
 router.use('/api/craw', craw)
+router.use('/api/watch', watch)
 
 // 配置
 app.use(router.routes()).use(router.allowedMethods())
