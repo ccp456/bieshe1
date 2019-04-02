@@ -1,0 +1,4 @@
+db.WATCH.find().forEach( function (x) {
+ x.createtime = new Date(x.createtime);
+  db.WATCH.save(x);
+});
