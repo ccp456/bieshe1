@@ -5,7 +5,7 @@
     <div class="news card">
       <el-tabs v-model="news">
         <el-tab-pane label="影评" name="new">
-          <div class="news-title" v-for="review in reviews">
+          <div class="news-title" v-for="review in reviews" :key="review.title">
             <a :href="review.href">{{ review.title }}</a>
           </div>
           <a class="more" href="#">更多</a>
@@ -14,7 +14,7 @@
           <a class="news-title" href="#">【升级】3月26日新BGP高防系统升级通知 </a>
         </el-tab-pane>
         <el-tab-pane label="国外电影" name="save">
-          <a class="news-title" href="#">【漏洞预警】Apache Solr < 7.0 反序列化远程代码执行漏洞</a>
+          <a class="news-title" href="#">【漏洞预警】Apache Solr 7.0 反序列化远程代码执行漏洞</a>
         </el-tab-pane>
         <el-tab-pane label="其他" name="other">
           <a class="news-title" href="#">【其它】关于深化增值税改革有关政策的通知</a>
@@ -24,6 +24,17 @@
     <div class="newmovie card">
       <el-tabs v-model="newmovie">
         <el-tab-pane label="新电影" name="newmovie">
+          <div class="newmovie" v-for="nm in newmovies" :key="nm.title" style="display: flex; border-bottom:1px #ccc solid">
+            <img :src="nm.img" style="height:80px; float:left; padding-right:10px">
+            <div style="padding-left: 5px">
+              <div><span style="text-overflow: ellipsis;">《{{ nm.title }}》</span><span style="font-size: 10px">{{ nm.release }}</span><span style="color: red; float: right; font-size:10px">豆瓣评分：{{ nm.rate }}</span></div>
+              <div style="font-size:13px; padding: 5px 10px">
+                <div>导演：{{ nm.director }}</div>
+                <div>主演：{{ nm.actors }}</div>
+                <div>国家：{{ nm.region }}</div>
+              </div>
+            </div>
+          </div>
         </el-tab-pane>
         <el-tab-pane label="当日票房" name="piaofang">
         </el-tab-pane>
@@ -58,8 +69,8 @@ export default {
     return {
       newmovie: 'newmovie',
       news: 'new',
-      reviews: [
-      ]
+      reviews: [],
+      newmovies: []
     }
   },
   components: {
@@ -69,8 +80,14 @@ export default {
   },
   created() {
     crawApi.getReview().then(response => {
-      console.log(response)
+      // console.log(response)
       this.reviews = response.data
+    }).catch(error => {
+      console.error
+    }),
+    crawApi.getNewmovie().then(response => {
+      // console.log(response)
+      this.newmovies = response.data
     }).catch(error => {
       console.error
     })

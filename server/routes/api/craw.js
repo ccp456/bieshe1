@@ -38,12 +38,49 @@ router.get('/review', async (ctx, next) => {
           let $element = $(element)
           items.push({
             title: $element.text(),
-            href: 'http://news.58921.com/review/' + $element.attr('href')
+            href: 'http://news.58921.com/' + $element.attr('href')
           })
         }
       })
     })
   ctx.body = items
+})
+
+/**
+ * @router get api/craw/newmovie
+ * @desc 测试接口地址
+ * @access 接口公开
+ */
+let nm
+router.get('/newmovie', async (ctx, next) => {
+  // 用 superagent 去抓取 https://cnodejs.org/ 的内容
+  superagent.get('https://movie.douban.com/')
+    .end(function (err, sres) {
+    // 常规的错误处理
+      if (err) {
+        return err
+      }
+      let $ = cheerio.load(sres.text, {
+        decodeEntities: false
+      })
+      nm = []
+      $('.ui-slide-item').each(function (idx, element) {
+        if (idx <= 6) {
+          let $element = $(element)
+          // console.log($('img')[idx].attribs.src)
+          nm.push({
+            img: $('img')[idx].attribs.src,
+            title: $element.data().title,
+            rate: $element.data().rate,
+            release: $element.data().release,
+            region: $element.data().region,
+            director: $element.data().director,
+            actors: $element.data().actors
+          })
+        }
+      })
+    })
+  ctx.body = nm
 })
 
 module.exports = router.routes()

@@ -6,5 +6,11 @@ export default {
       url: '/api/craw/review',
       method: 'get'
     })
+  },
+  getNewmovie () {
+    return axios({
+      url: '/api/craw/newmovie',
+      method: 'get'
+    })
   }
 }
