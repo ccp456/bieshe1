@@ -21,8 +21,15 @@ router.get('/home', async ctx => {
   // 今日增长观众
   const newwatch = await wadb.find({createtime: new Date(y, m, d)})
   let nw = newwatch.length
-  // 5天增长
+  // 总场次
+  const allsession = await ppdb.find({ptime: {$lte: Date()}})
+  let as = allsession.length
+  // 新增场次
+  const newsession = await ppdb.find({ptime: {$lte: new Date(y, m, d), $gte: new Date(y, m, d - 1)}})
+  let ns = newsession.length
+  console.log(ns)
 
+  // 图标
   const fe = await ppdb
     .aggregate([{$group: {_id: '', favg: {$avg: '$female'}}}])
   const ma = await ppdb
@@ -38,18 +45,23 @@ router.get('/home', async ctx => {
   let q2 = d2.length
   let q3 = d3.length
   let q4 = d4.length
-  let d4m = q4 - 9
-  let d3m = q3 - 18
-  let d2m = q2 - 15
-  let d1m = q1 - 11
-  let nwm = nw - 16
+  let d4m = q4 - 33
+  let d3m = q3 - 38
+  let d2m = q2 - 35
+  let d1m = q1 - 31
+  let nwm = nw - 26
 
   ctx.body = {
     audience: {nw: nw, aw: aw},
+    session: {ns: ns, as: as},
     day5: [q4, q3, q2, q1, nw],
-    day5f: [9, 18, 15, 11, 16],
+    day5f: [33, 38, 35, 31, 26],
     day5m: [d4m, d3m, d2m, d1m, nwm],
-    coc: [fe, ma, nu]
+    coc: [
+      {value: fe[0].favg, name: '女性'},
+      {value: ma[0].favg, name: '男性'},
+      {value: nu[0].favg, name: '空位'}
+    ]
   }
 })
 

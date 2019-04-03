@@ -45,22 +45,30 @@
     <div class="audience card">
       <div class="inline" style="width:50%; height:100%; overflow:hidden">
         <div class="card-title">当日数据</div>
-        <div class="inline item"><span>3</span>新增场次</div>
+        <div class="inline item"><span>{{ns}}</span>新增场次</div>
         <div class="inline item"><span>{{nw}}</span>新观众</div>
         <div class="inline item"><span>3</span>售出票数</div>
       </div>
       <div class="inline" style="width:49%; height:100%; overflow:hidden">
         <div class="card-title">总数据</div>
-        <div class="inline item"><span>3</span>总场次</div>
+        <div class="inline item"><span>{{as}}</span>总场次</div>
         <div class="inline item"><span>{{aw}}</span>总观众</div>
         <div class="inline item"><span>3</span>总出票数</div>
       </div>
     </div>
     <div class="chart card">
-      <div style="height:600px">
-        <chart ref="chart1" :options="orgOptions"></chart>
-        <chart ref="chart2" :options="coc"></chart>
-      </div>
+      <el-row style="padding: 50px">
+        <el-col :span="18">
+          <chart  ref="chart1" :options="orgOptions"></chart>
+        </el-col>
+        <el-col :span="6">
+          <chart  style="width: 300px; float:right"  ref="chart2" :options="coc"></chart>
+        </el-col>
+      </el-row>
+      <!-- <div style="display: inline-block; width: 100%">
+        <chart style="width: 400px" ref="chart1" :options="orgOptions"></chart>
+        <chart  style="width: 300px; float:right"  ref="chart2" :options="coc"></chart>
+      </div> -->
     </div>
   </div>
 </div>
@@ -74,14 +82,15 @@ export default {
   data() {
     return {
       coc: {
+        title: {text: '近一月每场观众占比'},
         tooltip: {
         trigger: 'item',
         formatter: "{a} <br/>{b}: {c} ({d}%)"
       },
       legend: {
         orient: 'vertical',
-        x: 'left',
-        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+        x: 'right',
+        data:['女性','男性','空位']
       },
       series: [
         {
@@ -102,51 +111,68 @@ export default {
               }
             }
           },
-            labelLine: {
-              normal: {
-                show: false
-              }
-            },
-            data:[
-              {value:335, name:'直接访问'},
-              {value:310, name:'邮件营销'},
-              {value:234, name:'联盟广告'},
-              {value:135, name:'视频广告'},
-              {value:1548, name:'搜索引擎'}
-            ]
-          }
+          labelLine: {
+            normal: {
+              show: false
+            }
+          },
+          data:[
+          ]
+        }
         ]
       },
       orgOptions: {
         title:{text: '五天观众增长'},
-      legend: {data:['总观众', '男', '女']},
-      xAxis: {type: 'category',},
-      yAxis: {type: 'value'},
-      series: [{
-        name: '总观众',
-        data: [],
-        type: 'line',
-        smooth: true
+        tooltip : {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            label: {
+              backgroundColor: '#6a7985'
+            }
+          }
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        legend: {data:['总观众', '男', '女']},
+        xAxis: {type: 'category', boundaryGap : false},
+        yAxis: {type: 'value'},
+        series: [{
+          name: '总观众',
+          data: [],
+          type: 'line',
+          smooth: true
+        },
+        {
+          name: '男',
+          data: [],
+          type: 'line',
+          smooth: true
+        },
+        {
+          name: '女',
+          data: [],
+          type: 'line',
+          smooth: true
+        }]
       },
-      {
-        name: '男',
-        data: [],
-        type: 'line',
-        smooth: true
-      },
-      {
-        name: '女',
-        data: [],
-        type: 'line',
-        smooth: true
-      }]
-    },
       newmovie: 'newmovie',
       news: 'new',
       reviews: [],
       newmovies: [],
       aw: [],
-      nw: []
+      nw: [],
+      as: [],
+      ns: []
     }
   },
   components: {
@@ -175,9 +201,17 @@ export default {
       this.aw = ad.aw
       this.nw = ad.nw
 
+      let ss = response.data.session
+      this.as = ss.as
+      this.ns = ss.ns
+
       let d5 = response.data.day5
       let d5f = response.data.day5f
       let d5m = response.data.day5m
+      let coc = response.data.coc
+      console.log(coc);
+      
+
       console.log(this.orgOptions.series)
       d5.forEach( (item, idx) => {
         this.orgOptions.series[0].data.push(item)
@@ -187,6 +221,9 @@ export default {
       })
       d5m.forEach( (item, idx) => {
         this.orgOptions.series[2].data.push(item)
+      })
+      coc.forEach( (item, idx) => {
+        this.coc.series[0].data.push(item)
       })
     }).catch(error => {
       console.error

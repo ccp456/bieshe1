@@ -2,7 +2,13 @@
 <div>
   <headTop></headTop>
   <div class="view">
-    
+    <el-card>
+      <div :slot="header">
+      </div>
+    </el-card>
+    <el-card>
+      
+    </el-card>
   </div>
 </div>
 </template>

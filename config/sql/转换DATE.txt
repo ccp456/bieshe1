@@ -2,3 +2,20 @@ db.WATCH.find().forEach( function (x) {
  x.createtime = new Date(x.createtime);
   db.WATCH.save(x);
 });
+
+db.PAIPIAN.find().forEach( function (x) {
+ x.female = new NumberInt(x.female);
+  db.PAIPIAN.save(x);
+});
+db.PAIPIAN.find().forEach( function (x) {
+ x.male = new NumberInt(x.male);
+  db.PAIPIAN.save(x);
+});
+db.PAIPIAN.find().forEach( function (x) {
+ x.nul = new NumberInt(x.nul);
+  db.PAIPIAN.save(x);
+});
+db.PAIPIAN.find().forEach( function (x) {
+ x.ptime = new Date(x.ptime);
+  db.PAIPIAN.save(x);
+});
