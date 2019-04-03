@@ -57,9 +57,9 @@
       </div>
     </div>
     <div class="chart card">
-      <div class="card-title">数据</div>
       <div style="height:600px">
-        <chart  ref="chart1" :options="orgOptions" id="mchart"  :auto-resize="true"></chart>
+        <chart ref="chart1" :options="orgOptions"></chart>
+        <chart ref="chart2" :options="coc"></chart>
       </div>
     </div>
   </div>
@@ -73,7 +73,74 @@ import {homeApi, crawApi} from '@/api/home'
 export default {
   data() {
     return {
-      orgOptions: {},
+      coc: {
+        tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+      },
+      legend: {
+        orient: 'vertical',
+        x: 'left',
+        data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+      },
+      series: [
+        {
+          name:'访问来源',
+          type:'pie',
+          radius: ['50%', '70%'],
+          avoidLabelOverlap: false,
+          label: {
+            normal: {
+              show: false,
+              position: 'center'
+            },
+            emphasis: {
+              show: true,
+              textStyle: {
+                  fontSize: '30',
+                  fontWeight: 'bold'
+              }
+            }
+          },
+            labelLine: {
+              normal: {
+                show: false
+              }
+            },
+            data:[
+              {value:335, name:'直接访问'},
+              {value:310, name:'邮件营销'},
+              {value:234, name:'联盟广告'},
+              {value:135, name:'视频广告'},
+              {value:1548, name:'搜索引擎'}
+            ]
+          }
+        ]
+      },
+      orgOptions: {
+        title:{text: '五天观众增长'},
+      legend: {data:['总观众', '男', '女']},
+      xAxis: {type: 'category',},
+      yAxis: {type: 'value'},
+      series: [{
+        name: '总观众',
+        data: [],
+        type: 'line',
+        smooth: true
+      },
+      {
+        name: '男',
+        data: [],
+        type: 'line',
+        smooth: true
+      },
+      {
+        name: '女',
+        data: [],
+        type: 'line',
+        smooth: true
+      }]
+    },
       newmovie: 'newmovie',
       news: 'new',
       reviews: [],
@@ -87,22 +154,7 @@ export default {
   },
   methods: {
   },
-  mounted() {
-    this.orgOptions = {
-        xAxis: {
-            type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: 'line',
-            smooth: true
-        }]
-    }
-  },
+  mounted() {},
   created() {
     // this.echart(),
     crawApi.getReview().then(response => {
@@ -116,11 +168,26 @@ export default {
       this.newmovies = response.data
     }).catch(error => {
       console.error
-    })
+    }),
     homeApi.getWatch().then(response => {
       // console.log(response.data)
-      this.aw = response.data.aw
-      this.nw = response.data.nw
+      let ad = response.data.audience
+      this.aw = ad.aw
+      this.nw = ad.nw
+
+      let d5 = response.data.day5
+      let d5f = response.data.day5f
+      let d5m = response.data.day5m
+      console.log(this.orgOptions.series)
+      d5.forEach( (item, idx) => {
+        this.orgOptions.series[0].data.push(item)
+      })
+      d5f.forEach( (item, idx) => {
+        this.orgOptions.series[1].data.push(item)
+      })
+      d5m.forEach( (item, idx) => {
+        this.orgOptions.series[2].data.push(item)
+      })
     }).catch(error => {
       console.error
     })
