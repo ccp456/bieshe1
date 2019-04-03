@@ -46,31 +46,40 @@
       <div class="inline" style="width:50%; height:100%; overflow:hidden">
         <div class="card-title">当日数据</div>
         <div class="inline item"><span>3</span>新增场次</div>
-        <div class="inline item"><span>3</span>新观众</div>
+        <div class="inline item"><span>{{nw}}</span>新观众</div>
         <div class="inline item"><span>3</span>售出票数</div>
       </div>
       <div class="inline" style="width:49%; height:100%; overflow:hidden">
         <div class="card-title">总数据</div>
         <div class="inline item"><span>3</span>总场次</div>
-        <div class="inline item"><span>3</span>总观众</div>
+        <div class="inline item"><span>{{aw}}</span>总观众</div>
         <div class="inline item"><span>3</span>总出票数</div>
       </div>
     </div>
-    <div class="chart card">3</div>
+    <div class="chart card">
+      <div class="card-title">数据</div>
+      <div style="height:600px">
+        <chart  ref="chart1" :options="orgOptions" id="mchart"  :auto-resize="true"></chart>
+      </div>
+    </div>
   </div>
 </div>
 </template>
 <script>
 import headTop from '@/components/headtop'
-import { crawApi } from '@/api/home'
+import echarts from 'echarts'
+import {homeApi, crawApi} from '@/api/home'
 
 export default {
   data() {
     return {
+      orgOptions: {},
       newmovie: 'newmovie',
       news: 'new',
       reviews: [],
-      newmovies: []
+      newmovies: [],
+      aw: [],
+      nw: []
     }
   },
   components: {
@@ -78,7 +87,24 @@ export default {
   },
   methods: {
   },
+  mounted() {
+    this.orgOptions = {
+        xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            type: 'line',
+            smooth: true
+        }]
+    }
+  },
   created() {
+    // this.echart(),
     crawApi.getReview().then(response => {
       // console.log(response)
       this.reviews = response.data
@@ -91,9 +117,15 @@ export default {
     }).catch(error => {
       console.error
     })
+    homeApi.getWatch().then(response => {
+      // console.log(response.data)
+      this.aw = response.data.aw
+      this.nw = response.data.nw
+    }).catch(error => {
+      console.error
+    })
   }
 }
-
 </script>
 <style>
 @import url('./css/main.css');

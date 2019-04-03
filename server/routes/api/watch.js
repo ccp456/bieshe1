@@ -9,7 +9,6 @@ const wadb = require('../../models/watch')
  * @desc 首页数据
  * @access 接口公开
  */
-let home
 router.get('/home', async ctx => {
   const wre = await wadb.find()
   let aw = wre.length
@@ -23,11 +22,7 @@ router.get('/home', async ctx => {
   let nw = newwatch.length
   // 今日增长观众
 
-  /* home.push({
-    , $gte: {$date: now.setDate(now.getDate() - 1)}
-    allwatch: aw,
-    newwatch: nw
-  }) */
+  ctx.body = {nw: nw, aw: aw}
 })
 
 module.exports = router.routes()
