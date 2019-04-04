@@ -47,13 +47,13 @@
         <div class="card-title">当日数据</div>
         <div class="inline item"><span>{{ns}}</span>新增场次</div>
         <div class="inline item"><span>{{nw}}</span>新观众</div>
-        <div class="inline item"><span>3</span>售出票数</div>
+        <div class="inline item"><span>{{nd}}</span>售出票数</div>
       </div>
       <div class="inline" style="width:49%; height:100%; overflow:hidden">
         <div class="card-title">总数据</div>
         <div class="inline item"><span>{{as}}</span>总场次</div>
         <div class="inline item"><span>{{aw}}</span>总观众</div>
-        <div class="inline item"><span>3</span>总出票数</div>
+        <div class="inline item"><span>{{ad}}</span>总出票数</div>
       </div>
     </div>
     <div class="chart card">
@@ -172,7 +172,9 @@ export default {
       aw: [],
       nw: [],
       as: [],
-      ns: []
+      ns: [],
+      ad: [],
+      nd: []
     }
   },
   components: {
@@ -204,6 +206,10 @@ export default {
       let ss = response.data.session
       this.as = ss.as
       this.ns = ss.ns
+
+      let sd = response.data.sold
+      this.nd = sd.nd
+      this.ad = sd.ad
 
       let d5 = response.data.day5
       let d5f = response.data.day5f

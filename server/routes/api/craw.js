@@ -65,7 +65,7 @@ router.get('/newmovie', async (ctx, next) => {
       })
       nm = []
       $('.ui-slide-item').each(function (idx, element) {
-        if (idx <= 6) {
+        if (idx <= 5) {
           let $element = $(element)
           // console.log($('img')[idx].attribs.src)
           nm.push({

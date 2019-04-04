@@ -34,6 +34,11 @@ const router = new Router({
       meta: ['数据统计', '热门标签']
     },
     {
+      path: '/hall',
+      component: resolve => require(['@/pages/video/hall'], resolve),
+      meta: ['影片管理', '影厅管理']
+    },
+    {
       path: '/manage',
       component: resolve => require(['@/pages/video/manage'], resolve),
       meta: ['影片管理', '排片管理']

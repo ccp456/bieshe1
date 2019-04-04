@@ -1,0 +1,32 @@
+.frame{
+  height:100%;
+  overflow: auto;
+}
+#view{
+  padding: 20px 20px 0 20px;
+  .dia{
+    font-size:20px;
+    display:block;
+    padding-top:20px
+  }
+  .el-card__header{
+    font-size: 20px;
+    .clearfix{
+      padding-left: 20px;
+      border-left: 3px #409eff solid;
+    }
+  }
+  .filter{
+    .el-card__body{
+      padding: 0px
+    }
+    .el-form{
+      padding: 40px
+    }
+  }
+  .el-table__row{
+    button{
+      font-size: 16px
+    }
+  }
+}

@@ -1,7 +1,7 @@
 <template>
 <div>
   <headTop></headTop>
-  <div class="view">
+  <div id="view">
     
   </div>
 </div>

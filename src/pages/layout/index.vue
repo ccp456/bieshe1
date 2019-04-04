@@ -13,6 +13,7 @@
 					</el-submenu>
 					<el-submenu index="3">
 						<template slot="title"><i class="el-icon-plus"></i>影片管理</template>
+						<el-menu-item index="hall">影厅管理</el-menu-item>
 						<el-menu-item index="manage">排片管理</el-menu-item>
 						<el-menu-item index="salestatic">销售统计</el-menu-item>
 					</el-submenu>

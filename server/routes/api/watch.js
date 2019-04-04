@@ -27,7 +27,20 @@ router.get('/home', async ctx => {
   // 新增场次
   const newsession = await ppdb.find({ptime: {$lte: new Date(y, m, d), $gte: new Date(y, m, d - 1)}})
   let ns = newsession.length
-  console.log(ns)
+  // 总售出
+  const allder = await ppdb
+    .aggregate([
+      {$match: {ptime: {$lte: new Date(y, m, d)}}},
+      {$group: {_id: '', fsum: {$sum: '$female'}, msum: {$sum: '$male'}}}
+    ])
+  let ad = allder[0].fsum + allder[0].msum
+  // 当日售出
+  const newder = await ppdb
+    .aggregate([
+      {$match: {ptime: {$lte: new Date(y, m, d), $gte: new Date(y, m, d - 1)}}},
+      {$group: {_id: '', fsum: {$sum: '$female'}, msum: {$sum: '$male'}}}
+    ])
+  let nd = newder[0].fsum + newder[0].msum
 
   // 图标
   const fe = await ppdb
@@ -54,6 +67,7 @@ router.get('/home', async ctx => {
   ctx.body = {
     audience: {nw: nw, aw: aw},
     session: {ns: ns, as: as},
+    sold: {nd: nd, ad: ad},
     day5: [q4, q3, q2, q1, nw],
     day5f: [33, 38, 35, 31, 26],
     day5m: [d4m, d3m, d2m, d1m, nwm],

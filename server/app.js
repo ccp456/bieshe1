@@ -31,6 +31,7 @@ app.use(cors({
 const users = require('./routes/api/users')
 const craw = require('./routes/api/craw')
 const watch = require('./routes/api/watch')
+const hall = require('./routes/api/hall')
 
 // 路由
 router.get('/', async ctx => {
@@ -57,6 +58,7 @@ mongoose
 router.use('/api/users', users)
 router.use('/api/craw', craw)
 router.use('/api/watch', watch)
+router.use('/api/hall', hall)
 
 // 配置
 app.use(router.routes()).use(router.allowedMethods())

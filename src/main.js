@@ -14,6 +14,7 @@ import '@/assets/css/main.css'
 import '@/assets/css/elpatch.css'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts/lib/chart/line'
+import '@/assets/css/main.scss'
 
 Vue.component('chart', ECharts)
 
