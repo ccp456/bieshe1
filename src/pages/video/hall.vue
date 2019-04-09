@@ -147,7 +147,7 @@ export default {
         let d = dt.getDate()
         hall.createtime = y + '年' + m + '月' + d + '日'
         this.tableData.push(hall)
-      })
+      }).then( this.newHall = false)
     }
   },
   components: {

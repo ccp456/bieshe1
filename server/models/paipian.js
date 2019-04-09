@@ -4,28 +4,35 @@ const Schema = mongoose.Schema
 // 实例化数据模型
 const paipianSchema = new Schema({
   pid: {
-    type: String,
-    required: true
+    type: String
+  },
+  mname: {
+    type: String
   },
   mid: {
-    type: String,
-    required: true
+    type: String
   },
   ptime: {
     type: Date,
     required: true
   },
+  hall: {
+    type: String
+  },
+  status: {
+    type: String
+  },
   male: {
-    type: Number,
-    required: true
+    type: Number
   },
   nul: {
-    type: Number,
-    required: true
+    type: Number
   },
   female: {
-    type: Number,
-    required: true
+    type: Number
+  },
+  auto: {
+    type: String
   }
 })
 

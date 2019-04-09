@@ -32,6 +32,7 @@ const users = require('./routes/api/users')
 const craw = require('./routes/api/craw')
 const watch = require('./routes/api/watch')
 const hall = require('./routes/api/hall')
+const video = require('./routes/api/video')
 
 // 路由
 router.get('/', async ctx => {
@@ -59,6 +60,7 @@ router.use('/api/users', users)
 router.use('/api/craw', craw)
 router.use('/api/watch', watch)
 router.use('/api/hall', hall)
+router.use('/api/video', video)
 
 // 配置
 app.use(router.routes()).use(router.allowedMethods())
