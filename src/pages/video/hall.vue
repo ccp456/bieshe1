@@ -4,45 +4,37 @@
   <div id="view">
     <el-card>
       <div slot="header"  class="clearfix">
-        <span>影厅列表</span>
+        <span>影院列表</span>
         <el-button
           style="float: right; padding: 7px 8px;"
           type="primary"
-          @click="newHall=true">新增影厅</el-button>
+          @click="newCinema=true">新增影院</el-button>
       </div>
       <el-table
         v-loading="loading"
         :data="tableData"
         style="width: 93.3333%; font-size:18px; margin: auto">
         <el-table-column
-          prop="_id"
-          label="影厅编号"
-          width="130">
+          prop="id"
+          label="影院编号"
+          width="100">
         </el-table-column>
         <el-table-column
-          prop="name"
-          label="名字"
-          width="250">
+          prop="cinema"
+          label="名称">
         </el-table-column>
         <el-table-column
-          prop="seat"
-          label="座位"
-          width="200">
+          prop="address"
+          label="地址">
         </el-table-column>
         <el-table-column
-          prop="createtime"
-          label="创建时间"
-          width="230">
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          width="150">
+          label="操作">
           <template slot-scope="scope">
             <el-button
-              @click="newHall=true"
+              @click="cHall(scope.$index, tableData)"
               type="text"
               size="small">
-              编辑
+              影厅详情
             </el-button>
             <el-button
               type="text"
@@ -57,8 +49,12 @@
   </div>
   <el-dialog
     width="30%"
+    :visible="hallEdit">
+  </el-dialog>
+  <el-dialog
+    width="30%"
     :visible="del">
-    <span style="">是否删除该ID为{{del_id}}的影厅？</span>
+    <span style="font-size:20px;">是否删除该ID为{{del_id}}的影院？</span>
     <div class="dia">
       <span style="text-align:right">
         <el-button type="danger" @click="Dele">确定</el-button>
@@ -67,46 +63,95 @@
     </div>
     </el-dialog>
   <el-dialog
-    title="新增影厅"
-    :visible.sync="newHall">
-    <el-form :model="hall">
-      <el-form-item label="影厅名称">
-        <el-input v-model="hall.name"></el-input>
+    title="新增影院"
+    :visible.sync="newCinema">
+    <el-form :model="cinema">
+      <el-form-item label="影院名称">
+        <el-input v-model="cinema.name"></el-input>
       </el-form-item>
-      <el-form-item label="影厅座位">
-        <el-input v-model="hall.seat"></el-input>
+      <el-form-item inline="true" label="影院地址">
+        <el-cascader
+          size="large"
+          :options="options"
+          class="province"
+          v-model="cinema.province">
+        </el-cascader>
+        <el-input
+          v-model="cinema.address"
+          style="width:300px"></el-input>
       </el-form-item>
       <el-button type="success"
-        @click.native.prevent="postNewHall">保存数据</el-button>
+        @click.native.prevent="postNewCinema">保存数据</el-button>
     </el-form>
   </el-dialog>
 </div>
 </template>
 <script>
 import headTop from '@/components/headtop'
+import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
 import { hallApi } from '@/api/video'
 
 export default {
   data() {
     return {
+      hallEdit: false,
+      options: regionData,
       loading: false,
       del: false,
       del_id: '',
-      newHall: false,
+      newCinema: false,
       tableData: [],
-      hall: {
-        name: '',
-        seat: ''
-      }
+      cinema: {},
+      cinemaHall: '',
+      hall: [],
+      hall_id: ''
     }
   },
   created() {
-    this.gethall()
+    this.getCinema()
   },
   methods: {
+    cHall(index, rows) {
+      this.hall_id = {id: rows[index].id}
+      this.postHall()
+    },
+    postHall() {
+      hallApi.postHall(this.hall_id).then(response => {
+        this.hall = ctx
+      })
+    },
+    postNewCinema() {
+      let cinema = this.cinema
+      let p = CodeToText[cinema.province[0]]
+      let c = CodeToText[cinema.province[1]]
+      if (c === '市辖区') c = CodeToText[cinema.province[0]]
+      let t = CodeToText[cinema.province[2]]
+      let data = {
+        cinema: cinema.name,
+        province: p,
+        city: c,
+        address: p + c + t + cinema.address,
+        area: '华东'
+      }
+      console.log(data)
+      hallApi.postNewCinema(data).then( response => {
+        this.$message('成功添加')
+        this.tableData=[]
+        this.loading=true
+      }).then(setTimeout(() => {
+        this.getCinema(),
+        this.loading=false
+      },1000))
+    },
+    getCinema() {
+      hallApi.getCinema().then( response => {
+        console.log(response.data)
+        this.tableData = response.data
+      })
+    },
     Dele() {
       let Id = this.del_id
-      hallApi.postDel({Id: Id}).then( response => {
+      hallApi.postDel({id: Id}).then( response => {
         this.$message('删除成功')
         this.del = false
       }).catch(err => {
@@ -116,25 +161,12 @@ export default {
         this.tableData=[],
         this.loading=true)
       .then(setTimeout(() => {
-        this.gethall(),
+        this.getCinema(),
         this.loading=false
       },1000))
     },
-    gethall() {
-      hallApi.getHall().then( response => {
-        let hall = response.data
-        hall.forEach( item => {
-          let dt = new Date(item.createtime)
-          let y = dt.getFullYear()
-          let m = (dt.getMonth()+1<10?'0'+(dt.getMonth()+1):dt.getMonth()+1)-1
-          let d = dt.getDate()
-          item.createtime = y + '年' + m + '月' + d + '日'
-          this.tableData.push(item)
-        })
-      })
-    },
     Delete(index, rows) {
-      this.del_id = rows[index]._id
+      this.del_id = rows[index].id
       this.del = true
     },
     postNewHall() {

@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 export default {
-  getHall () {
+  getCinema () {
     return axios({
-      url: '/api/hall/gethall',
+      url: '/api/hall/getcinema',
       method: 'get'
     })
   },
@@ -14,9 +14,23 @@ export default {
       data
     })
   },
+  postNewCinema (data) {
+    return axios({
+      url: '/api/hall/postnewcinema',
+      method: 'post',
+      data
+    })
+  },
   postDel (data) {
     return axios({
-      url: '/api/hall/delhall',
+      url: '/api/hall/delcinema',
+      method: 'post',
+      data
+    })
+  },
+  postHall (data) {
+    return axios({
+      url: '/api/hall/posthall',
       method: 'post',
       data
     })

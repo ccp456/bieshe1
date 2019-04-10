@@ -3,8 +3,8 @@ const Schema = mongoose.Schema
 
 // 实例化数据模型
 const HallSchema = new Schema({
-  _id: {
-    type: Number,
+  belong: {
+    type: String,
     required: true
   },
   name: {
@@ -12,11 +12,7 @@ const HallSchema = new Schema({
     required: true
   },
   seat: {
-    type: Number,
-    required: true
-  },
-  createtime: {
-    type: Date,
+    type: String,
     required: true
   }
 })

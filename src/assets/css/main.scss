@@ -2,13 +2,19 @@
   height:100%;
   overflow: auto;
 }
+.province{
+  width: 300px;
+  span{
+    display: none
+  }
+}
+.dia{
+  font-size:20px;
+  display:block;
+  padding-top:20px
+}
 #view{
   padding: 20px 20px 0 20px;
-  .dia{
-    font-size:20px;
-    display:block;
-    padding-top:20px
-  }
   .el-card__header{
     font-size: 20px;
     .clearfix{
