@@ -4,9 +4,6 @@
 }
 .province{
   width: 300px;
-  span{
-    display: none
-  }
 }
 .dia{
   font-size:20px;
@@ -34,5 +31,19 @@
     button{
       font-size: 16px
     }
+  }
+}
+#static{
+  .el-card__header{
+    font-size: 20px;
+    .clearfix{
+      padding-left: 20px;
+      border-left: 3px #409eff solid;
+    }
+  }
+  padding: 20px;
+  .table{
+    width: 80%;
+    margin: 0 auto;
   }
 }

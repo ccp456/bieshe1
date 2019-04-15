@@ -86,39 +86,39 @@ export default {
         tooltip: {
         trigger: 'item',
         formatter: "{a} <br/>{b}: {c} ({d}%)"
-      },
-      legend: {
-        orient: 'vertical',
-        x: 'right',
-        data:['女性','男性','空位']
-      },
-      series: [
-        {
-          name:'访问来源',
-          type:'pie',
-          radius: ['50%', '70%'],
-          avoidLabelOverlap: false,
-          label: {
-            normal: {
-              show: false,
-              position: 'center'
-            },
-            emphasis: {
-              show: true,
-              textStyle: {
-                  fontSize: '30',
-                  fontWeight: 'bold'
+        },
+        legend: {
+          orient: 'vertical',
+          x: 'right',
+          data:['女性','男性','空位']
+        },
+        series: [
+          {
+            name:'访问来源',
+            type:'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+              normal: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                show: true,
+                textStyle: {
+                    fontSize: '30',
+                    fontWeight: 'bold'
+                }
               }
-            }
-          },
-          labelLine: {
-            normal: {
-              show: false
-            }
-          },
-          data:[
-          ]
-        }
+            },
+            labelLine: {
+              normal: {
+                show: false
+              }
+            },
+            data:[
+            ]
+          }
         ]
       },
       orgOptions: {

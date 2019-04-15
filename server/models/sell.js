@@ -2,41 +2,29 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 // 实例化数据模型
-const paipianSchema = new Schema({
-  pid: {
+const sellSchema = new Schema({
+  id: {
     type: String
   },
   mname: {
     type: String
   },
-  mid: {
-    type: String
-  },
   cinema: {
     type: String
   },
-  ptime: {
+  province: {
     type: Date,
     required: true
   },
-  hall: {
+  city: {
     type: String
   },
-  status: {
+  area: {
     type: String
   },
-  male: {
-    type: Number
-  },
-  nul: {
-    type: Number
-  },
-  female: {
-    type: Number
-  },
-  auto: {
+  type: {
     type: String
   }
 })
 
-module.exports = mongoose.model('PAIPIAN', paipianSchema, 'PAIPIAN')
+module.exports = mongoose.model('sell', sellSchema, 'sell')

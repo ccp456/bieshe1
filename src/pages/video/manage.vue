@@ -48,21 +48,43 @@
       <el-table
         v-loading="loading"
         :data="tableData"
-        style="width: 93.3333%; font-size:18px; margin: auto">
+        style="width: 93.3333%; font-size:15px; margin: auto">
         <el-table-column
           prop="mname"
-          label="电影名称"
-          width="250">
+          label="电影名称">
+        </el-table-column>
+        <el-table-column
+          prop="cinema"
+          label="影院">
         </el-table-column>
         <el-table-column
           prop="hall"
-          label="影厅"
-          width="250">
+          label="影厅">
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          label="状态">
+          <template slot-scope="scope">
+            <!-- <el-button
+              type="text"
+              @click="changeStatus">
+              {{scope.row.status}}
+            </el-button> -->
+            <el-select
+              v-model="scope.row.status"
+              @change="changeStatus(scope.row)">
+              <el-option
+                v-for="item in sOption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
         </el-table-column>
         <el-table-column
           prop="ptime"
-          label="播放时间"
-          width="420">
+          label="播放时间">
         </el-table-column>
         <el-table-column
           label="操作"
@@ -107,10 +129,22 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="影厅">
+        <el-select
+          filterable
+          v-model="video.cinema"
+          @change="postHall()"
+          placeholder="请选择">
+          <el-option
+            v-for="item in cinemas"
+            :key="item.id"
+            :label="item.cinema"
+            :value="item.cinema">
+          </el-option>
+        </el-select>
         <el-select v-model="video.hall" placeholder="请选择">
           <el-option
             v-for="item in halls"
-            :key="item._id"
+            :key="item.id"
             :label="item.name"
             :value="item.name">
           </el-option>
@@ -135,7 +169,7 @@
 </template>
 <script>
 import headTop from '@/components/headtop'
-import {manageApi} from '@/api/video'
+import {manageApi, hallApi} from '@/api/video'
 
 export default {
   data() {
@@ -165,41 +199,52 @@ export default {
       loading:false,
       newMovie: false ,
       search: false,
-      filter: ['1'],
-      filterForm: {
-        message: '',
-        role: '',
-        department: ''
-      },
-      video: {
-        name: '',
-        time: '',
-        hall: ''
-      },
+      filter: {},
+      video: {},
+      cinemas: [],
       halls: [],
       mname: [],
       tableData: [],
       del_id: '',
       del: false,
+      sOption: [{
+        value: '未开始购票',
+        label: '未开始购票'
+      },{
+        value: '等待播放',
+        label: '等待播放'
+      },{
+        value: '已结束',
+        label: '已结束'
+      },]
     } 
   },
   created() {
     this.getmovie()
-    manageApi.getHall().then(response => {
-      let hall = response.data
-      hall.forEach((item, idx) => {
-        this.halls.push(item)
-      })
-    }),
+    this.getCinema()
     manageApi.mname().then(response => {
       let mname = response.data
       mname.forEach((item, idx) => {
         this.mname.push(item)
       })
-      console.log(this.mname)
     })
   },
   methods: {
+    changeStatus(data) {
+      manageApi.changeStatus(data)
+      this.$message('修改成功')
+    },
+    getCinema() {
+      hallApi.getCinema('所有').then(res => {
+        this.cinemas = res.data
+      })
+    },
+    postHall() {
+      let id = {cinema: this.video.cinema}
+      hallApi.postHall(id).then(res => {
+        this.halls = res.data
+      })
+    },
     Dele() {
       let Id = this.del_id
       manageApi.postDel({Id: Id}).then( response => {
@@ -226,7 +271,7 @@ export default {
           let d = dt.getDate()
           let h = dt.getHours()
           let min = dt.getSeconds()
-          item.ptime = y + '年' + m + '月' + d + '日' + h + '点' + min + '分'
+          item.ptime = y + '-' + m + '-' + d + ' ' + h + ':' + min
           this.tableData.push(item) 
         })
       })
@@ -251,7 +296,10 @@ export default {
       var results = queryString ? mname.filter(this.createFilter(queryString)) : mname;
       // 调用 callback 返回建议列表的数据
       cb(results);
-    }
+    },
+    onSubmit(){
+
+    },
   },
   components: {
     headTop

@@ -56,7 +56,8 @@ router.post('/newmovie', async ctx => {
     hall: ctx.request.body.hall,
     mname: ctx.request.body.name,
     ptime: ctx.request.body.time,
-    status: '放映中',
+    cinema: ctx.request.body.cinema,
+    status: '未开始购票',
     auto: '0'
   })
   await np.save().then(nm => {
@@ -73,6 +74,16 @@ router.post('/dele', async ctx => {
   await Paipian.deleteOne({_id: Id}).then(() => {
     ctx.body = {message: '删除成功'}
   })
+})
+/**
+ * 更新状态
+ */
+router.post('/changestatus', async ctx => {
+  let result = await Paipian.find({_id: ctx.request.body._id})
+  let data = result[0]
+  data.status = ctx.request.body.status
+  const up = new Paipian(data)
+  await up.save()
 })
 
 module.exports = router.routes()

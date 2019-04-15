@@ -1,10 +1,13 @@
 import axios from 'axios'
 
 export default {
-  getCinema () {
+  getCinema (area) {
     return axios({
       url: '/api/hall/getcinema',
-      method: 'get'
+      method: 'get',
+      params: {
+        area: area
+      }
     })
   },
   postNewHall (data) {
@@ -24,6 +27,13 @@ export default {
   postDel (data) {
     return axios({
       url: '/api/hall/delcinema',
+      method: 'post',
+      data
+    })
+  },
+  delHall (data) {
+    return axios({
+      url: '/api/hall/delhall',
       method: 'post',
       data
     })

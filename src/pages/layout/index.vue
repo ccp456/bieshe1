@@ -5,19 +5,19 @@
 				<el-menu background-color="#d05a6e" text-color="#fff" :default-active="defaultActive" style="min-height: 100%;" theme="dark" router>
 					<el-menu-item index="home"><i class="el-icon-menu"></i>影院总览</el-menu-item>
 					<el-submenu index="2">
-						<template slot="title"><i class="el-icon-document"></i>数据统计</template>
-						<el-menu-item index="audience">观众统计</el-menu-item>
-						<el-menu-item index="tag">热门标签</el-menu-item>
-						<el-menu-item index="channel">销售渠道</el-menu-item>
-						<el-menu-item index="national">全国统计</el-menu-item>
+						<template slot="title"><i class="el-icon-document"></i>销售统计</template>
+						<el-menu-item index="audience">销售统计</el-menu-item>
+						<el-menu-item index="tag">销售渠道</el-menu-item>
+						<el-menu-item index="channel">影院销量</el-menu-item>
+						<!-- <el-menu-item index="national">全国统计</el-menu-item> -->
 					</el-submenu>
 					<el-submenu index="3">
 						<template slot="title"><i class="el-icon-plus"></i>影片管理</template>
 						<el-menu-item index="hall">影厅管理</el-menu-item>
 						<el-menu-item index="manage">排片管理</el-menu-item>
-						<el-menu-item index="salestatic">销售统计</el-menu-item>
+						<!-- <el-menu-item index="salestatic">销售统计</el-menu-item> -->
 					</el-submenu>
-					<el-submenu index="4">
+					<!-- <el-submenu index="4">
 						<template slot="title"><i class="el-icon-star-on"></i>线上营销</template>
 						<el-menu-item index="onactive">活动管理</el-menu-item>
 						<el-menu-item index="message">短信营销</el-menu-item>
@@ -28,13 +28,15 @@
 						<template slot="title"><i class="el-icon-edit"></i>线下营销</template>
 						<el-menu-item index="offactive">活动管理</el-menu-item>
 						<el-menu-item index="offout">活动支出</el-menu-item>
-					</el-submenu>
+					</el-submenu> -->
 				</el-menu>
 			</el-col>
 			<el-col :span="20" style="height: 100%;">
-				<keep-alive>
-				    <router-view></router-view>
-				</keep-alive>
+				<el-scrollbar>
+					<keep-alive>
+							<router-view></router-view>
+					</keep-alive>
+				</el-scrollbar>
 			</el-col>
 		</el-row>
 	</div>

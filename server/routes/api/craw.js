@@ -38,7 +38,7 @@ router.get('/review', async (ctx, next) => {
           let $element = $(element)
           items.push({
             title: $element.text(),
-            href: 'http://news.58921.com/' + $element.attr('href')
+            href: 'http://news.58921.com' + $element.attr('href')
           })
         }
       })
@@ -78,6 +78,29 @@ router.get('/newmovie', async (ctx, next) => {
             actors: $element.data().actors
           })
         }
+      })
+    })
+  ctx.body = nm
+})
+
+/**
+ * 数据
+ */
+router.get('/piaofang', async (ctx, next) => {
+  superagent.get('http://58921.com/')
+    .end(function (err, sres) {
+    // 常规的错误处理
+      if (err) {
+        return err
+      }
+      let $ = cheerio.load(sres.text, {
+        decodeEntities: false
+      })
+      nm = []
+      $('#box_office_live_summary .table-responsive .table tr td').each(function (idx, element) {
+        let $element = $(element)
+        console.log($element.data())
+        nm = $element.text()
       })
     })
   ctx.body = nm

@@ -32,5 +32,12 @@ export default {
       method: 'post',
       data
     })
+  },
+  changeStatus (data) {
+    return axios({
+      url: '/api/video/changestatus',
+      method: 'post',
+      data
+    })
   }
 }

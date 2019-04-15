@@ -4,11 +4,34 @@
   <div id="view">
     <el-card>
       <div slot="header"  class="clearfix">
-        <span>影院列表</span>
+        <span>影院列表--{{area}}</span>
         <el-button
           style="float: right; padding: 7px 8px;"
           type="primary"
           @click="newCinema=true">新增影院</el-button>
+      </div>
+      <div style="margin-bottom:20px">
+        <el-button
+          plain
+          @click="changeArea('所有')">所有</el-button>
+        <el-button
+          plain
+          @click="changeArea('华东')">华东</el-button>
+        <el-button
+          plain
+          @click="changeArea('华南')">华南</el-button>
+        <el-button
+          plain
+          @click="changeArea('华中')">华中</el-button>
+        <el-button
+          plain
+          @click="changeArea('东北')">东北</el-button>
+        <el-button
+          plain
+          @click="changeArea('西南')">西南</el-button>
+        <el-button
+          plain
+          @click="changeArea('西北')">西北</el-button>
       </div>
       <el-table
         v-loading="loading"
@@ -31,7 +54,7 @@
           label="操作">
           <template slot-scope="scope">
             <el-button
-              @click="cHall(scope.$index, tableData)"
+              @click="hallInfo(scope.$index, tableData)"
               type="text"
               size="small">
               影厅详情
@@ -84,6 +107,48 @@
         @click.native.prevent="postNewCinema">保存数据</el-button>
     </el-form>
   </el-dialog>
+  <!-- 影厅 -->
+  <el-dialog title="影厅详情" :visible.sync="hInfo">
+    <el-table
+      @selection-change="selectChange"
+      v-loading="loading"
+      :data="hallData">
+      <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="影厅">
+      </el-table-column>
+      <el-table-column
+        prop="seat"
+        label="座位">
+      </el-table-column>
+    </el-table>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="delhall()">删除</el-button>
+      <el-button type="primary" @click="nhall=true">新增</el-button>
+    </div>
+    <el-dialog
+      width="30%"
+      title="新增影厅"
+      :visible.sync="nhall"
+      append-to-body>
+      <el-form :model="hform">
+        <el-form-item label="影厅名">
+          <el-input v-model="hform.name"></el-input>
+        </el-form-item>
+        <span>座位</span>
+        <el-slider
+          :max="500"
+          v-model="hform.seat"
+          show-input>
+        </el-slider>
+        <el-button type="primary" @click="postNewHall()">新增</el-button>
+      </el-form>
+    </el-dialog>
+  </el-dialog>
 </div>
 </template>
 <script>
@@ -94,6 +159,11 @@ import { hallApi } from '@/api/video'
 export default {
   data() {
     return {
+      hform: {},
+      nhall: false,
+      hallData: [],
+      hInfo: false,
+      area: '所有',
       hallEdit: false,
       options: regionData,
       loading: false,
@@ -104,20 +174,53 @@ export default {
       cinema: {},
       cinemaHall: '',
       hall: [],
-      hall_id: ''
+      cinema_id: ''
     }
   },
   created() {
     this.getCinema()
   },
   methods: {
-    cHall(index, rows) {
-      this.hall_id = {id: rows[index].id}
+    postNewHall() {
+      let data = {
+        name: this.hform.name,
+        seat: this.hform.seat,
+        belong: this.cinema_id.id
+      }
+      hallApi.postNewHall(data).then(res => {
+        this.$message('成功')
+      }).then(() => {
+        this.postHall()
+        this.nhall = false
+      })
+    },
+    changeArea(data) {
+      this.area = data
+      this.getCinema()
+    },
+    hallInfo(index, rows) {
+      this.cinema_id = {id: rows[index].id}
       this.postHall()
     },
+    delhall() {
+      let hall = this.hallSelect
+      this.loading = true
+      hallApi.delHall(hall)
+      this.$message('删除成功')
+      setTimeout(() => {
+        this.postHall()
+        this.loading = false
+      }, 1000)
+    },
+    selectChange(val) {
+      this.hallSelect = val;
+      console.log(this.hallSelect)
+    },
     postHall() {
-      hallApi.postHall(this.hall_id).then(response => {
-        this.hall = ctx
+      hallApi.postHall(this.cinema_id).then(res => {
+        this.hallData = res.data
+      }).then(() => {
+        this.hInfo = true
       })
     },
     postNewCinema() {
@@ -133,7 +236,6 @@ export default {
         address: p + c + t + cinema.address,
         area: '华东'
       }
-      console.log(data)
       hallApi.postNewCinema(data).then( response => {
         this.$message('成功添加')
         this.tableData=[]
@@ -144,8 +246,8 @@ export default {
       },1000))
     },
     getCinema() {
-      hallApi.getCinema().then( response => {
-        console.log(response.data)
+      let area = this.area
+      hallApi.getCinema(area).then( response => {
         this.tableData = response.data
       })
     },
@@ -158,33 +260,21 @@ export default {
         this.$message('失败')
       })
       .then(
-        this.tableData=[],
-        this.loading=true)
+        this.tableData = [],
+        this.loading = true)
       .then(setTimeout(() => {
-        this.getCinema(),
-        this.loading=false
+        this.getCinema()
+        this.newCinema = false
+        this.loading = false
       },1000))
     },
     Delete(index, rows) {
       this.del_id = rows[index].id
       this.del = true
-    },
-    postNewHall() {
-      let nhall = this.hall
-      hallApi.postNewHall(nhall).then( response => {
-        let hall = response.data
-        let dt = new Date(hall.createtime)
-        let y = dt.getFullYear()
-        let m = (dt.getMonth() + 1 < 10 ? '0' + (dt.getMonth() + 1) : dt.getMonth() + 1) - 1
-        let d = dt.getDate()
-        hall.createtime = y + '年' + m + '月' + d + '日'
-        this.tableData.push(hall)
-      }).then( this.newHall = false)
     }
   },
   components: {
     headTop
   }
 }
-
 </script>

@@ -9,12 +9,15 @@ import locale from 'element-ui/lib/locale/lang/zh-CN'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import Vuex from 'vuex'
-import Echart from 'echarts'
+import echarts from 'echarts'
 import '@/assets/css/main.css'
 import '@/assets/css/elpatch.css'
 import ECharts from 'vue-echarts/components/ECharts'
 import 'echarts/lib/chart/line'
 import './assets/css/main.scss'
+import $ from 'jquery'
+
+Vue.prototype.$echarts = echarts
 
 Vue.component('chart', ECharts)
 
@@ -22,13 +25,14 @@ axios.defaults.baseURL = 'http://localhost:5000/'
 
 Vue.config.productionTip = false
 
-Vue.use(ElementUI, { locale }, axios, Vuex)
-Vue.use(Echart)
+Vue.use(ElementUI, { locale }, axios, Vuex, $)
+Vue.use(echarts)
 
 /* eslint-disable no-new */
 new Vue({
+  $,
   el: '#app',
-  Echart,
+  echarts,
   axios,
   ElementUI,
   router,
