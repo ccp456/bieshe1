@@ -1,30 +1,19 @@
-# market
+# 一个Vue单界面管理应用
 
-> A Vue.js project
+------
 
-## Build Setup
+## 快速运行
 
 ``` bash
-# install dependencies
+# 安装模块
 npm install
 
-# serve with hot reload at localhost:8080
+# 启动前端应用 localhost:5555
 npm run dev
 
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
+# 启动后端
+nodemon ./server/app.js
 ```
+## 技术栈
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+Vue, Vue-elementUI, node.js(Koa), mongodb
