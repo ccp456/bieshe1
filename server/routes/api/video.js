@@ -47,24 +47,37 @@ router.get('/mname', async (ctx, next) => {
  * 新增
  */
 router.get('/getmovie', async ctx => {
-  const result = await Paipian.find({auto: '0'})
+  const result = await Paipian
+    .find({auto: '0'})
+    .sort({ptime: -1})
   ctx.body = result
 })
 
 router.post('/newmovie', async ctx => {
-  const np = new Paipian({
+  const check = await Paipian.find({
     hall: ctx.request.body.hall,
-    mname: ctx.request.body.name,
-    ptime: ctx.request.body.time,
-    cinema: ctx.request.body.cinema,
-    status: '未开始购票',
-    auto: '0'
+    ptime: {$gt: ctx.request.body.time - 2 * 60 * 60000, $lt: ctx.request.body.time + 2 * 60 * 60000}
   })
-  await np.save().then(nm => {
-    ctx.body = nm
-  }).catch(err => {
-    console.log(err)
-  })
+  console.log(check)
+  console.log(check)
+  if (check.length > 0) {
+    ctx.body = '该时间段已有电影播放'
+  } else {
+    const np = new Paipian({
+      hall: ctx.request.body.hall,
+      mname: ctx.request.body.name,
+      ptime: ctx.request.body.time,
+      cinema: ctx.request.body.cinema,
+      status: '等待上映',
+      auto: '0'
+    })
+    await np.save().then(nm => {
+      ctx.body = nm
+      console.log(nm)
+    }).catch(err => {
+      console.log(err)
+    })
+  }
 })
 /**
  * 删除

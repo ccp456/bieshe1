@@ -218,8 +218,8 @@ export default {
     },
     postHall() {
       hallApi.postHall(this.cinema_id).then(res => {
+        console.log(res.data)
         this.hallData = res.data
-      }).then(() => {
         this.hInfo = true
       })
     },
@@ -229,12 +229,16 @@ export default {
       let c = CodeToText[cinema.province[1]]
       if (c === '市辖区') c = CodeToText[cinema.province[0]]
       let t = CodeToText[cinema.province[2]]
+      let area
+      if (p === "福建省") area = '华东'
+      else if (p === "甘肃省") area= '西北'
+      else area = "东北"
       let data = {
         cinema: cinema.name,
         province: p,
         city: c,
         address: p + c + t + cinema.address,
-        area: '华东'
+        area: area
       }
       hallApi.postNewCinema(data).then( response => {
         this.$message('成功添加')

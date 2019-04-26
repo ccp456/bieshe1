@@ -25,9 +25,9 @@ router.get('/getcinema', async ctx => {
   let area = url.parse(ctx.request.url, true).query.area
   let result
   if (area === '所有') {
-    result = await Cinema.find()
+    result = await Cinema.find().sort({_id: -1})
   } else {
-    result = await Cinema.find({area: area})
+    result = await Cinema.find({area: area}).sort({_id: -1})
   }
   ctx.body = result
 })
@@ -68,8 +68,13 @@ router.post('/delcinema', async ctx => {
  * @access
  */
 router.post('/posthall', async ctx => {
-  const cinema = await Cinema.find({cinema: ctx.request.body.cinema})
-  const id = cinema[0].id
+  let id
+  if (ctx.request.body.cinema) {
+    const cinema = await Cinema.find({cinema: ctx.request.body.cinema})
+    id = cinema[0].id
+  } else {
+    id = ctx.request.body.id
+  }
   console.log(id)
   const result = await Hall.find({belong: id})
   ctx.body = result

@@ -70,7 +70,16 @@
               @click="changeStatus">
               {{scope.row.status}}
             </el-button> -->
+            <span v-if="scope.row.status==='已完成'">
+              已完成
+            </span>
+            <el-button
+              v-else-if="scope.row.status==='已结束'"
+              type="text">
+              导入数据
+            </el-button>
             <el-select
+              v-else
               v-model="scope.row.status"
               @change="changeStatus(scope.row)">
               <el-option
@@ -91,6 +100,7 @@
           width="150">
           <template slot-scope="scope">
             <el-button
+              v-if="scope.row.status!=='已结束'"
               @click="newMovie=true"
               type="text"
               size="small">
@@ -188,10 +198,10 @@ export default {
               picker.$emit('pick', date);
             }
           }, {
-            text: '一周前',
+            text: '下一周',
             onClick(picker) {
               const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
               picker.$emit('pick', date);
             }
           }]
@@ -208,15 +218,12 @@ export default {
       del_id: '',
       del: false,
       sOption: [{
-        value: '未开始购票',
-        label: '未开始购票'
-      },{
-        value: '等待播放',
-        label: '等待播放'
+        value: '等待上映',
+        label: '等待上映'
       },{
         value: '已结束',
         label: '已结束'
-      },]
+      }]
     } 
   },
   created() {
@@ -231,8 +238,21 @@ export default {
   },
   methods: {
     changeStatus(data) {
-      manageApi.changeStatus(data)
-      this.$message('修改成功')
+      if (data.status === '导入数据') {
+      } else {
+        let time = new Date()
+        time = time.getTime()
+        console.log(time)
+        let ct = new Date(data.time)
+        ct = ct.getTime()
+        if (ct > time) {
+          this.$message('请确认时间')
+          data.status = '等待结束'
+        } else {
+          manageApi.changeStatus(data)
+          this.$message('修改成功')
+        }
+      }
     },
     getCinema() {
       hallApi.getCinema('所有').then(res => {
@@ -271,9 +291,10 @@ export default {
           let d = dt.getDate()
           let h = dt.getHours()
           let min = dt.getSeconds()
+          item.time = item.ptime
           item.ptime = y + '-' + m + '-' + d + ' ' + h + ':' + min
-          this.tableData.push(item) 
         })
+        this.tableData = m
       })
     },
     Delete(index, rows) {
@@ -281,15 +302,24 @@ export default {
       this.del = true
     },
     postNewvideo(){
+      let tt = new Date()
+      let checktime = tt.getTime() + 24 * 3 * 60 * 60000
       let nm = this.video
-      manageApi.postMovie(nm).then(response => {
-        this.newMovie = false
-        this.tableData = []
-        this.loading = true
-      }).then(setTimeout(() => {
-        this.getmovie(),
-        this.loading=false
-      },1000))
+      if (nm.time.getTime() < checktime) {
+        this.$message('只能对三天后进行排片')
+      } else {
+        nm.time = nm.time.getTime()
+        manageApi.postMovie(nm).then(response => {
+          console.log(response.data)
+          this.newMovie = false
+          this.tableData = []
+          this.loading = true
+        }).then(setTimeout(() => {
+          this.getmovie(),
+          this.loading=false
+        },1000))
+        console.log(nm)
+      }
     },
     querySearch(queryString, cb) {
       var mname = this.mname;
