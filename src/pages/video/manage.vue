@@ -239,7 +239,7 @@ export default {
   methods: {
     changeStatus(data) {
       if (data.status === '导入数据') {
-      } else {
+      } else if (data.status === '已结束'){
         let time = new Date()
         time = time.getTime()
         console.log(time)
@@ -247,11 +247,14 @@ export default {
         ct = ct.getTime()
         if (ct > time) {
           this.$message('请确认时间')
-          data.status = '等待结束'
+          data.status = '等待上映'
         } else {
           manageApi.changeStatus(data)
           this.$message('修改成功')
         }
+      } else {
+          manageApi.changeStatus(data)
+          this.$message('修改成功')
       }
     },
     getCinema() {
@@ -303,7 +306,7 @@ export default {
     },
     postNewvideo(){
       let tt = new Date()
-      let checktime = tt.getTime() + 24 * 3 * 60 * 60000
+      let checktime = tt.getTime() -   24 * 3 * 60 * 60000
       let nm = this.video
       if (nm.time.getTime() < checktime) {
         this.$message('只能对三天后进行排片')

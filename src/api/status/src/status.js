@@ -1,11 +1,10 @@
 import axios from 'axios'
 
 export default {
-  postSell (data) {
+  postSell () {
     return axios({
       url: '/api/static/postsell',
-      method: 'post',
-      data
+      method: 'post'
     })
   }
 }

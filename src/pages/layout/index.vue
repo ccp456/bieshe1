@@ -12,7 +12,7 @@
 					<el-menu-item index="home"><i class="el-icon-menu"></i>影院总览</el-menu-item>
 					<el-submenu index="2">
 						<template slot="title"><i class="el-icon-document"></i>销售统计</template>
-						<el-menu-item index="audience">销售统计</el-menu-item>
+						<el-menu-item index="audience">销售概况</el-menu-item>
 						<el-menu-item index="tag">销售渠道</el-menu-item>
 						<el-menu-item index="channel">影院销量</el-menu-item>
 						<!-- <el-menu-item index="national">全国统计</el-menu-item> -->
