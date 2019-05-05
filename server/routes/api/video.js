@@ -3,6 +3,8 @@ const router = new Router()
 const cheerio = require('cheerio')
 const superagent = require('superagent')
 
+const Cinema = require('../../models/cinema')
+const Movie = require('../../models/movie')
 const Hall = require('../../models/hall')
 const Paipian = require('../../models/paipian')
 
@@ -63,6 +65,41 @@ router.post('/newmovie', async ctx => {
   if (check.length > 0) {
     ctx.body = '该时间段已有电影播放'
   } else {
+    const ccheck = await Cinema.find({
+      cinema: ctx.request.body.cinema
+    })
+    let cinema = ccheck[0]
+    const mcheck = await Movie.find({
+      mname: ctx.request.body.name,
+      city: cinema.city
+    })
+    console.log(mcheck)
+    if (mcheck.length > 0) {
+      Movie.updateOne(
+        {_id: mcheck[0]._id},
+        {$set: {
+          paipian: mcheck[0].paipian + 1,
+          update: new Date()
+        }},
+        err => {
+          if (err) console.log(err)
+        }
+      )
+    } else {
+      let newmovie = new Movie({
+        mname: ctx.request.body.name,
+        area: cinema.area,
+        province: cinema.province,
+        city: cinema.city,
+        alipay: 0,
+        maoyan: 0,
+        active: 0,
+        offline: 0,
+        paipian: 1,
+        update: new Date()
+      })
+      await newmovie.save()
+    }
     const np = new Paipian({
       hall: ctx.request.body.hall,
       mname: ctx.request.body.name,
@@ -73,7 +110,6 @@ router.post('/newmovie', async ctx => {
     })
     await np.save().then(nm => {
       ctx.body = nm
-      console.log(nm)
     }).catch(err => {
       console.log(err)
     })

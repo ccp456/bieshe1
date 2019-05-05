@@ -6,7 +6,9 @@ const importSchema = new Schema({
   mname: {
     type: String
   },
-  time
+  time: {
+    type: String
+  }
 })
 
 module.exports = mongoose.model('imports', importSchema, 'IMPORT')

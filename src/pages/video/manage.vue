@@ -100,7 +100,7 @@
           width="150">
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.status!=='已结束'"
+              v-if="scope.row.status!=='已结束' && scope.row.status!=='已完成'"
               @click="newMovie=true"
               type="text"
               size="small">
@@ -308,21 +308,17 @@ export default {
       let tt = new Date()
       let checktime = tt.getTime() -   24 * 3 * 60 * 60000
       let nm = this.video
-      if (nm.time.getTime() < checktime) {
-        this.$message('只能对三天后进行排片')
-      } else {
-        nm.time = nm.time.getTime()
-        manageApi.postMovie(nm).then(response => {
-          console.log(response.data)
-          this.newMovie = false
-          this.tableData = []
-          this.loading = true
-        }).then(setTimeout(() => {
-          this.getmovie(),
-          this.loading=false
-        },1000))
-        console.log(nm)
-      }
+      nm.time = nm.time.getTime()
+      manageApi.postMovie(nm).then(response => {
+        console.log(response.data)
+        this.newMovie = false
+        this.tableData = []
+        this.loading = true
+      }).then(setTimeout(() => {
+        this.getmovie(),
+        this.loading=false
+      },1000))
+      console.log(nm)
     },
     querySearch(queryString, cb) {
       var mname = this.mname;
@@ -331,8 +327,7 @@ export default {
       cb(results);
     },
     onSubmit(){
-
-    },
+    }
   },
   components: {
     headTop
