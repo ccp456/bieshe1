@@ -34,7 +34,12 @@
               ref="chart1"
               style="width: 100%; height:400px"></chart>
           </el-col>
-          <el-col :span="6"></el-col>
+          <el-col :span="6">
+            <chart
+              :options="bussi"
+              ref="chart1"
+              style="width: 100%; height:400px"></chart>
+          </el-col>
         </el-row>
       </div>
       <div>
@@ -49,6 +54,9 @@
             prop="paipian"
             label="排片量"></el-table-column>
           <el-table-column
+            prop="sum"
+            label="总销量"></el-table-column>
+          <el-table-column
             prop="offline"
             label="线下销量"></el-table-column>
           <el-table-column
@@ -58,7 +66,7 @@
             prop="alipay"
             label="支付宝销量"></el-table-column>
           <el-table-column
-            prop="active"
+            prop="maoyan"
             label="猫眼电影销量"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
@@ -83,14 +91,58 @@ import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlu
 export default {
   data() {
     return {
+      bussi: {
+        title: {
+          text: '销售渠道',
+          x: 'right',
+          y: 'top'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        series: [
+          {
+            type:'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+              normal: {
+                show: false,
+                position: 'center'
+              },
+              emphasis: {
+                show: true,
+                textStyle: {
+                  fontSize: '30',
+                  fontWeight: 'bold'
+                }
+              }
+            },
+            data: [
+              {value: 0, name: '淘票票'},
+              {value: 0, name: '猫眼电脑'},
+              {value: 0, name: '活动'},
+              {value: 0, name: '线下售票'}
+            ]
+          }
+        ]
+      }
+      ,
       movie:{
         title: {
           text: '所有地区统计图',
           x: 'left',
           y: 'top'
         },
+        tooltip : {
+          trigger: 'axis',
+          axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
         legend: {
-          data: {}
+          data: ['淘票票', '猫眼电影', '活动', '线下']
         },
         xAxis: {
           type: 'category',
@@ -99,10 +151,32 @@ export default {
         yAxis: {
           type: 'value'
         },
-        series: [{
-          data: [],
-          type: 'bar'
-        }]
+        series: [
+          {
+            name: '淘票票',
+            type: 'bar',
+            stack: '总量',
+            data: []
+          },
+          {
+            name: '猫眼电影',
+            type: 'bar',
+            stack: '总量',
+            data: []
+          },
+          {
+            name: '活动',
+            type: 'bar',
+            stack: '总量',
+            data: []
+          },
+          {
+            name: '线下',
+            type: 'bar',
+            stack: '总量',
+            data: []
+          },
+        ]
       },
       tableData: [],
       area: '',
@@ -120,14 +194,24 @@ export default {
       this.tableData = []
       status.getMovie(this.params).then(res => {
         const data = res.data
-        this.tableData = data
-        let x = []
         data.forEach(item => {
-          if (item._id.length >= 10) x.push(item._id.substr(0,10) + '...')
-          else x.push(item._id)
+          item.sum = item.alipay + item.maoyan + item.offline + item.active
         })
-        this.movie.xAxis.data = x
-        console.log(this.movie.xAxis.data)
+        this.tableData = data
+        let pie = this.bussi.series[0].data
+        data.forEach(item => {
+          if (item._id.length >= 10) this.movie.xAxis.data.push(item._id.substr(0,10) + '...')
+          else this.movie.xAxis.data.push(item._id)
+          this.movie.series[0].data.push(item.alipay)
+          this.movie.series[1].data.push(item.maoyan)
+          this.movie.series[2].data.push(item.active)
+          this.movie.series[3].data.push(item.offline)
+          pie[0].value += item.alipay
+          pie[1].value += item.maoyan
+          pie[2].value += item.active
+          pie[3].value += item.offline
+        })
+        console.log(pie)
       })
     },
     getParams() {
