@@ -58,12 +58,6 @@
     </div>
     <div class="chart card">
       <el-row style="padding: 50px">
-        <el-col :span="18">
-          <chart  ref="chart1" :options="orgOptions"></chart>
-        </el-col>
-        <el-col :span="6">
-          <chart  style="width: 300px; float:right"  ref="chart2" :options="coc"></chart>
-        </el-col>
       </el-row>
       <!-- <div style="display: inline-block; width: 100%">
         <chart style="width: 400px" ref="chart1" :options="orgOptions"></chart>

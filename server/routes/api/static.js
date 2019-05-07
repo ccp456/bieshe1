@@ -2,7 +2,7 @@ const Router = require('koa-router')
 const router = new Router()
 
 const Movie = require('../../models/movie')
-const Sell = require('../../models/sell')
+// const Sell = require('../../models/sell')
 const Paipian = require('../../models/paipian')
 
 router.post('/postsell', async ctx => {
@@ -30,7 +30,6 @@ router.get('/postMovie', async ctx => {
   if (param.area === 'all') {
     result = await Movie.aggregate(table)
   }
-  console.log(result)
   ctx.body = result
 })
 

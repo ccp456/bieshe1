@@ -6,6 +6,7 @@
       <div slot="header"  class="clearfix">
         <span style="line-height:40px">销售渠道</span>
         <div style="float: right">
+          <span>选择地区</span>
           <el-select v-model="area" @change="clear('city')">
             <el-option :key="1" :value="'华南'" :label="'华南'"></el-option>
             <el-option :key="2" :value="'华中'" :label="'华中'"></el-option>
@@ -97,6 +98,11 @@ export default {
           x: 'right',
           y: 'top'
         },
+        legend: {
+          data: ['淘票票', '猫眼电影', '活动', '线下'],
+          orient: 'vertical',
+          x: 'left'
+        },
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
@@ -121,9 +127,9 @@ export default {
             },
             data: [
               {value: 0, name: '淘票票'},
-              {value: 0, name: '猫眼电脑'},
+              {value: 0, name: '猫眼电影'},
               {value: 0, name: '活动'},
-              {value: 0, name: '线下售票'}
+              {value: 0, name: '线下'}
             ]
           }
         ]

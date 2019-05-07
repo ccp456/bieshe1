@@ -16,19 +16,16 @@
         <div v-show="search">
           <el-form :inline="true" :model="filter">
             <el-form-item>
-                <el-input placeholder="登录账号/员工姓名/手机号" v-model="filter.message">
-                  <template slot="prepend">员工信息</template>
-                </el-input>
+              <el-input v-model="filter.movie" placeholder="电影名称"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-select v-model="filter.department" placeholder="员工所在部门">
-                <el-option label="区域一" value="shanghai"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-select v-model="filter.role" placeholder="员工角色">
-                <el-option label="区域一" value="shanghai"></el-option>
-              </el-select>
+              <el-cascader
+                change-on-select
+                size="large"  
+                :options="options"
+                class="province"
+                v-model="filter.area">
+              </el-cascader>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -180,6 +177,7 @@
 <script>
 import headTop from '@/components/headtop'
 import {manageApi, hallApi} from '@/api/video'
+import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
 
 export default {
   data() {
@@ -209,7 +207,11 @@ export default {
       loading:false,
       newMovie: false ,
       search: false,
-      filter: {},
+      filter: {
+        movie: '',
+        area: ''
+      },
+      options: provinceAndCityData,
       video: {},
       cinemas: [],
       halls: [],
@@ -285,10 +287,14 @@ export default {
       },1000))
     },
     getmovie() {
-      manageApi.getmovie().then(response => {
+      manageApi.getmovie(this.filter).then(response => {
         let m = response.data
         m.forEach( item => {
+          let now = new Date()
           let dt = new Date(item.ptime)
+          let timecheck
+          now > dt ? timecheck = true : timecheck = false
+          if (timecheck && item.status === '等待上映') item.status = '已结束' 
           let y = dt.getFullYear()
           let m = (dt.getMonth()+1<10?'0'+(dt.getMonth()+1):dt.getMonth()+1)
           let d = dt.getDate()

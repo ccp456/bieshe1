@@ -49,9 +49,11 @@ router.get('/mname', async (ctx, next) => {
  * 新增
  */
 router.get('/getmovie', async ctx => {
+  const param = ctx.request.query
   const result = await Paipian
     .find({auto: '0'})
     .sort({ptime: -1})
+  console.log(param)
   ctx.body = result
 })
 
