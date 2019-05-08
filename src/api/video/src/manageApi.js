@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 export default {
-  getmovie (param) {
+  getmovie (params) {
     return axios({
-      param: param,
+      params: params,
       url: '/api/video/getmovie',
       method: 'get'
     })

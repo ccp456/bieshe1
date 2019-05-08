@@ -36,10 +36,6 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="当日票房" name="piaofang">
-        </el-tab-pane>
-        <el-tab-pane label="当日排片" name="paipian">
-        </el-tab-pane>
       </el-tabs>
     </div>
     <div class="audience card">
@@ -57,8 +53,25 @@
       </div>
     </div>
     <div class="chart card">
-      <el-row style="padding: 50px">
-      </el-row>
+      <div class="card-title">当日排片</div>
+      <el-table :data="today">
+        <el-table-column
+          prop="mname"
+          label="电影">
+        </el-table-column>
+        <el-table-column
+          prop="ptime"
+          label="时间">
+        </el-table-column>
+        <el-table-column
+          prop="cinema"
+          label="影院">
+        </el-table-column>
+        <el-table-column
+          prop="hall"
+          label="影厅">
+        </el-table-column>
+      </el-table>
       <!-- <div style="display: inline-block; width: 100%">
         <chart style="width: 400px" ref="chart1" :options="orgOptions"></chart>
         <chart  style="width: 300px; float:right"  ref="chart2" :options="coc"></chart>
@@ -71,94 +84,12 @@
 import headTop from '@/components/headtop'
 import echarts from 'echarts'
 import {homeApi, crawApi} from '@/api/home'
+import {manageApi, hallApi} from '@/api/video'
 
 export default {
   data() {
     return {
-      coc: {
-        title: {text: '近一月每场观众占比'},
-        tooltip: {
-        trigger: 'item',
-        formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-          orient: 'vertical',
-          x: 'right',
-          data:['女性','男性','空位']
-        },
-        series: [
-          {
-            name:'访问来源',
-            type:'pie',
-            radius: ['50%', '70%'],
-            avoidLabelOverlap: false,
-            label: {
-              normal: {
-                show: false,
-                position: 'center'
-              },
-              emphasis: {
-                show: true,
-                textStyle: {
-                    fontSize: '30',
-                    fontWeight: 'bold'
-                }
-              }
-            },
-            labelLine: {
-              normal: {
-                show: false
-              }
-            },
-            data:[
-            ]
-          }
-        ]
-      },
-      orgOptions: {
-        title:{text: '五天观众增长'},
-        tooltip : {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            label: {
-              backgroundColor: '#6a7985'
-            }
-          }
-        },
-        toolbox: {
-          feature: {
-            saveAsImage: {}
-          }
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
-        },
-        legend: {data:['总观众', '男', '女']},
-        xAxis: {type: 'category', boundaryGap : false},
-        yAxis: {type: 'value'},
-        series: [{
-          name: '总观众',
-          data: [],
-          type: 'line',
-          smooth: true
-        },
-        {
-          name: '男',
-          data: [],
-          type: 'line',
-          smooth: true
-        },
-        {
-          name: '女',
-          data: [],
-          type: 'line',
-          smooth: true
-        }]
-      },
+      today: [],
       newmovie: 'newmovie',
       news: 'new',
       reviews: [],
@@ -168,7 +99,10 @@ export default {
       as: [],
       ns: [],
       ad: [],
-      nd: []
+      nd: [],
+      params: {
+        mode: 'home'
+      }
     }
   },
   components: {
@@ -209,7 +143,6 @@ export default {
       let d5f = response.data.day5f
       let d5m = response.data.day5m
       let coc = response.data.coc
-      console.log(coc);
       
 
       console.log(this.orgOptions.series)
@@ -228,6 +161,32 @@ export default {
     }).catch(error => {
       console.error
     })
+    this.getmovie()
+  },
+  methods: {
+    getmovie() {
+      manageApi.getmovie(this.params).then(response => {
+        let m = response.data
+        if (m !== '无数据') m.forEach( item => {
+          let now = new Date()
+          let dt = new Date(item.ptime)
+          let timecheck
+          now > dt ? timecheck = true : timecheck = false
+          let y = dt.getFullYear()
+          let m = (dt.getMonth()+1<10?'0'+(dt.getMonth()+1):dt.getMonth()+1)
+          let d = dt.getDate()
+          let h = dt.getHours()
+          let min = dt.getSeconds()
+          item.time = item.ptime
+          item.ptime = h + '点' + min + '分'
+          // item.ptime = y + '-' + m + '-' + d + ' ' + h + ':' + min
+        })
+        this.today = m
+        console.log(this.today)
+        // console.log(this.params)
+        
+      })
+    }
   }
 }
 </script>

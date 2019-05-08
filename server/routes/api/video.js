@@ -49,12 +49,72 @@ router.get('/mname', async (ctx, next) => {
  * 新增
  */
 router.get('/getmovie', async ctx => {
+  let res
   const param = ctx.request.query
   const result = await Paipian
     .find({auto: '0'})
     .sort({ptime: -1})
   console.log(param)
-  ctx.body = result
+  res = result
+  let home = []
+  let time = new Date()
+  // 首页
+  if (param.mode === 'home') {
+    result.forEach(item => {
+      if (item.ptime.toDateString() === time.toDateString()) {
+        home.push(item)
+      }
+    })
+    if (home.length > 0) res = home
+    else res = '无数据'
+  }
+  // 筛选
+  if (param.search) {
+    let check = []
+    if (param.movie) {
+      // 电影名称
+      result.forEach(item => {
+        if (item.mname === param.movie) {
+          check.push(item)
+        }
+      })
+    } else {
+      check = result
+    }
+    if (param.city || param.province) {
+      // 地区
+      let cinema
+      let area = []
+      if (param.city) {
+        cinema = await Cinema.find({city: param.city})
+      } else {
+        cinema = await Cinema.find({province: param.province})
+      }
+      // console.log(check)
+      cinema.forEach(cinema => {
+        check.forEach(item => {
+          if (item.cinema === cinema.cinema) {
+            area.push(item)
+          }
+        })
+      })
+      check = area
+    }
+    if (param.star && param.end) {
+      let area = []
+      check.forEach(item => {
+        let ptime = new Date(item.ptime)
+        let star = new Date(param.star)
+        let end = new Date(param.end)
+        if (ptime.getTime() >= star.getTime() && ptime.getTime() <= end.getTime()) {
+          area.push(item)
+        }
+      })
+      check = area
+    }
+    res = check
+  }
+  ctx.body = res
 })
 
 router.post('/newmovie', async ctx => {

@@ -26,6 +26,13 @@
                 class="province"
                 v-model="filter.area">
               </el-cascader>
+              <el-date-picker
+                v-model="filter.time"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期">
+              </el-date-picker>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -36,7 +43,30 @@
     </el-card>
     <el-card>
       <div slot="header"  class="clearfix">
-        <span>排片列表</span>
+        <span>排片列表
+          <span style="margin-left:50px">
+            <el-button
+              type="text"
+              size="small"
+              @click="change('all')"
+              >全部排片</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="change('等待上映')"
+              >等待上映</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="change('已结束')"
+              >等待导入</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="change('已完成')"
+              >已完成</el-button>
+          </span>
+        </span>
         <el-button
           style="float: right; padding: 7px 8px;"
           type="primary"
@@ -208,14 +238,17 @@ export default {
       newMovie: false ,
       search: false,
       filter: {
-        movie: '',
-        area: ''
+        movie: null,
+        area: [],
+        time: []
       },
+      param: {},
       options: provinceAndCityData,
       video: {},
       cinemas: [],
       halls: [],
       mname: [],
+      data: [],
       tableData: [],
       del_id: '',
       del: false,
@@ -244,7 +277,6 @@ export default {
       } else if (data.status === '已结束'){
         let time = new Date()
         time = time.getTime()
-        console.log(time)
         let ct = new Date(data.time)
         ct = ct.getTime()
         if (ct > time) {
@@ -287,13 +319,14 @@ export default {
       },1000))
     },
     getmovie() {
-      manageApi.getmovie(this.filter).then(response => {
+      manageApi.getmovie(this.param).then(response => {
         let m = response.data
         m.forEach( item => {
           let now = new Date()
           let dt = new Date(item.ptime)
           let timecheck
-          now > dt ? timecheck = true : timecheck = false
+          now.getTime() > dt.getTime() ? timecheck = true : timecheck = false
+          if (timecheck && item.status !== '已结束' && now.getTime() < dt.getTime() + 120 * 60 * 1000) item.status = '正在播放'
           if (timecheck && item.status === '等待上映') item.status = '已结束' 
           let y = dt.getFullYear()
           let m = (dt.getMonth()+1<10?'0'+(dt.getMonth()+1):dt.getMonth()+1)
@@ -303,6 +336,7 @@ export default {
           item.time = item.ptime
           item.ptime = y + '-' + m + '-' + d + ' ' + h + ':' + min
         })
+        this.data = m
         this.tableData = m
       })
     },
@@ -316,7 +350,6 @@ export default {
       let nm = this.video
       nm.time = nm.time.getTime()
       manageApi.postMovie(nm).then(response => {
-        console.log(response.data)
         this.newMovie = false
         this.tableData = []
         this.loading = true
@@ -332,7 +365,30 @@ export default {
       // 调用 callback 返回建议列表的数据
       cb(results);
     },
+    change(data) {
+      const origin = this.data
+      if (data === 'all') this.getmovie()
+      else {
+        this.tableData = []
+        origin.forEach(item => {
+          if (item.status === data) {
+            this.tableData.push(item)
+          }
+        })
+      }
+    },
     onSubmit(){
+      this.param = {}
+      
+      if (this.filter.movie) this.param.movie = this.filter.movie
+      if (this.filter.area[0]) this.param.province = CodeToText[this.filter.area[0]]
+      if (this.filter.area[1]) this.param.city = CodeToText[this.filter.area[1]]
+      if (this.filter.time) {
+        this.param.star = this.filter.time[0]
+        this.param.end = this.filter.time[1]
+      }
+      if (this.param !== []) this.param.search = 1
+      this.getmovie()
     }
   },
   components: {

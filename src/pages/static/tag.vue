@@ -217,7 +217,7 @@ export default {
           pie[2].value += item.active
           pie[3].value += item.offline
         })
-        console.log(pie)
+        console.log(this.movie)
       })
     },
     getParams() {
