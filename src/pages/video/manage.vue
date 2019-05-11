@@ -100,11 +100,10 @@
             <span v-if="scope.row.status==='已完成'">
               已完成
             </span>
-            <el-button
-              v-else-if="scope.row.status==='已结束'"
-              type="text">
-              导入数据
-            </el-button>
+            <span style="color: green"
+              v-else-if="scope.row.status==='已结束'">
+              已结束
+            </span>
             <el-select
               v-else
               v-model="scope.row.status"
@@ -126,6 +125,12 @@
           label="操作"
           width="150">
           <template slot-scope="scope">
+            <el-button
+              v-if="scope.row.status==='已结束'"
+              type="text"
+              @click="importData(scope.row)">
+              导入数据
+            </el-button>
             <el-button
               v-if="scope.row.status!=='已结束' && scope.row.status!=='已完成'"
               @click="newMovie=true"
@@ -192,8 +197,9 @@
     </el-form>
   </el-dialog>
   <el-dialog
-    width="30%"
-    :visible="del">
+    width="50%"
+    :visible="del"
+    >
     <span style="">是否删除该场次？</span>
     <div class="dia">
       <span style="text-align:right">
@@ -201,7 +207,23 @@
         <el-button @click="del=false">取消</el-button>
       </span>
     </div>
-    </el-dialog>
+  </el-dialog>
+  <el-dialog
+    width="30%"
+    :visible="importDia"
+    title="导入数据">
+    <div class="dia">
+      <el-upload
+        class="upload-demo"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        multiple
+        :limit="3"
+        :file-list="fileList">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传Json文件</div>
+      </el-upload>
+    </div>
+  </el-dialog>
 </div>
 </template>
 <script>
@@ -212,28 +234,30 @@ import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlu
 export default {
   data() {
     return {
-        pickerOptions1: {
-          shortcuts: [{
-            text: '今天',
-            onClick(picker) {
-              picker.$emit('pick', new Date());
-            }
-          }, {
-            text: '昨天',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '下一周',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', date);
-            }
-          }]
-        },
+      fileList: [],
+      pickerOptions1: {
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date());
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() - 3600 * 1000 * 24);
+            picker.$emit('pick', date);
+          }
+        }, {
+          text: '下一周',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', date);
+          }
+        }]
+      },
+      importDia: false,
       loading:false,
       newMovie: false ,
       search: false,
@@ -272,6 +296,10 @@ export default {
     })
   },
   methods: {
+    importData(data) {
+      this.importDia = true
+      console.log(data)
+    },
     changeStatus(data) {
       if (data.status === '导入数据') {
       } else if (data.status === '已结束'){
