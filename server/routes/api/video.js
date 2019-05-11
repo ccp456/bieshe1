@@ -2,8 +2,8 @@ const Router = require('koa-router')
 const router = new Router()
 const cheerio = require('cheerio')
 const superagent = require('superagent')
-const path = require('path')
-const fs = require('fs')
+// const path = require('path')
+// const fs = require('fs')
 
 const Cinema = require('../../models/cinema')
 const Movie = require('../../models/movie')
@@ -15,7 +15,6 @@ router.post('/importData', async (ctx, next) => {
   console.log(ctx.request.body)
   let base = ctx.request.body
   let sell = ctx.request.body.data
-  console.log(sell)
   if (sell.length < 0) ctx.body = 'f'
   else {
     let data = new Importdata({
@@ -23,7 +22,7 @@ router.post('/importData', async (ctx, next) => {
       cinema: base.info.cinema,
       ptime: base.info.ptime,
       hall: base.info.hall,
-      sell: sell.length
+      sale: sell.length
     })
     await data.save().then(() => {
       ctx.body = 's'
@@ -222,7 +221,9 @@ router.post('/changestatus', async ctx => {
   console.log(ctx.request.body)
   data.status = ctx.request.body.status
   const up = new Paipian(data)
-  await up.save()
+  await up.save().then(() => {
+    ctx.body = '修改成功'
+  })
 })
 
 module.exports = router.routes()

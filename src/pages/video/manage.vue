@@ -198,7 +198,7 @@
   </el-dialog>
   <el-dialog
     width="50%"
-    :visible="del"
+    :visible.sync="del"
     >
     <span style="">是否删除该场次？</span>
     <div class="dia">
@@ -210,7 +210,7 @@
   </el-dialog>
   <el-dialog
     width="30%"
-    :visible="importDia"
+    :visible.sync="importDia"
     title="导入数据">
     <div>
       <input type="file" ref="file" accept=".json"/>
@@ -223,6 +223,7 @@
 import headTop from '@/components/headtop'
 import {manageApi, hallApi} from '@/api/video'
 import { provinceAndCityData, regionData, provinceAndCityDataPlus, regionDataPlus, CodeToText, TextToCode } from 'element-china-area-data'
+import { throws } from 'assert';
 
 export default {
   data() {
@@ -296,6 +297,7 @@ export default {
       reader.readAsText(file)
       let res
       let info = this.now
+      let window = this
       reader.onload = async function(){
         let json = JSON.parse(this.result)
         let data = {
@@ -306,7 +308,8 @@ export default {
           console.log(res.data)
           info.status = '已完成'
           manageApi.changeStatus(info)
-          this.importDia = false
+        }).then(() => {
+          window.importDia = false
         })
       }
     },
@@ -315,6 +318,9 @@ export default {
       this.now = data
     },
     changeStatus(data) {
+      if (data.status === '已完成') {
+        manageApi.changeStatus(data)
+      }
       if (data.status === '导入数据') {
       } else if (data.status === '已结束'){
         let time = new Date()
