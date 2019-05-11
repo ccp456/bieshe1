@@ -2,11 +2,37 @@ const Router = require('koa-router')
 const router = new Router()
 const cheerio = require('cheerio')
 const superagent = require('superagent')
+const path = require('path')
+const fs = require('fs')
 
 const Cinema = require('../../models/cinema')
 const Movie = require('../../models/movie')
+const Importdata = require('../../models/import')
 const Hall = require('../../models/hall')
 const Paipian = require('../../models/paipian')
+
+router.post('/importData', async (ctx, next) => {
+  console.log(ctx.request.body)
+  let base = ctx.request.body
+  let sell = ctx.request.body.data
+  console.log(sell)
+  if (sell.length < 0) ctx.body = 'f'
+  else {
+    let data = new Importdata({
+      mname: base.info.mname,
+      cinema: base.info.cinema,
+      ptime: base.info.ptime,
+      hall: base.info.hall,
+      sell: sell.length
+    })
+    await data.save().then(() => {
+      ctx.body = 's'
+    }).catch(err => {
+      console.log(err)
+      ctx.body = 'sf'
+    })
+  }
+})
 
 /**
  * 获取影厅
@@ -190,8 +216,10 @@ router.post('/dele', async ctx => {
  * 更新状态
  */
 router.post('/changestatus', async ctx => {
+  console.log(ctx.request.body)
   let result = await Paipian.find({_id: ctx.request.body._id})
   let data = result[0]
+  console.log(ctx.request.body)
   data.status = ctx.request.body.status
   const up = new Paipian(data)
   await up.save()

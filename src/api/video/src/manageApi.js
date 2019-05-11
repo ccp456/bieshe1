@@ -1,6 +1,13 @@
 import axios from 'axios'
 
 export default {
+  importData (data) {
+    return axios({
+      data,
+      url: '/api/video/importData',
+      method: 'post'
+    })
+  },
   getmovie (params) {
     return axios({
       params: params,

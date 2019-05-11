@@ -7,6 +7,15 @@ const importSchema = new Schema({
     type: String
   },
   time: {
+    type: Date
+  },
+  cinema: {
+    type: String
+  },
+  hall: {
+    type: String
+  },
+  sale: {
     type: String
   }
 })

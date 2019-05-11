@@ -54,6 +54,9 @@
     </div>
     <div class="chart card">
       <div class="card-title">当日排片</div>
+      <!-- <div 
+        v-if="today=[]"
+        style="padding-top: 20px">暂无数据</div> -->
       <el-table :data="today">
         <el-table-column
           prop="mname"

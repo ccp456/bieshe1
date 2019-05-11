@@ -212,16 +212,9 @@
     width="30%"
     :visible="importDia"
     title="导入数据">
-    <div class="dia">
-      <el-upload
-        class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        multiple
-        :limit="3"
-        :file-list="fileList">
-        <el-button size="small" type="primary">点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传Json文件</div>
-      </el-upload>
+    <div>
+      <input type="file" ref="file" accept=".json"/>
+      <el-button type="text" @click="getFile">提交</el-button>
     </div>
   </el-dialog>
 </div>
@@ -282,7 +275,8 @@ export default {
       },{
         value: '已结束',
         label: '已结束'
-      }]
+      }],
+      now: {}
     } 
   },
   created() {
@@ -296,9 +290,29 @@ export default {
     })
   },
   methods: {
+    getFile () {
+      const file = this.$refs.file.files[0]
+      let reader = new FileReader()
+      reader.readAsText(file)
+      let res
+      let info = this.now
+      reader.onload = async function(){
+        let json = JSON.parse(this.result)
+        let data = {
+          info: info,
+          data: json
+        }
+        manageApi.importData(data).then(res => {
+          console.log(res.data)
+          info.status = '已完成'
+          manageApi.changeStatus(info)
+          this.importDia = false
+        })
+      }
+    },
     importData(data) {
       this.importDia = true
-      console.log(data)
+      this.now = data
     },
     changeStatus(data) {
       if (data.status === '导入数据') {

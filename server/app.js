@@ -1,10 +1,14 @@
 const Koa = require('koa')
+const serve = require('koa-static')
 const Router = require('koa-router')
 const mongoose = require('mongoose')
 const cors = require('koa2-cors')
 const bodyParser = require('koa-bodyparser')
 const cheerio = require('cheerio')
 const superagent = require('superagent')
+const koaBody = require('koa-body')
+const path = require('path')
+const fs = require('fs')
 
 // 实例化
 const app = new Koa()
