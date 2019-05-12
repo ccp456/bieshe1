@@ -209,13 +209,37 @@
     </div>
   </el-dialog>
   <el-dialog
-    width="30%"
+    width="50%"
     :visible.sync="importDia"
     title="导入数据">
     <div>
       <input type="file" ref="file" accept=".json"/>
       <el-button type="text" @click="getFile">提交</el-button>
     </div>
+    <p>只能导入json格式文件</p>
+    <!-- <table class="tips-table">
+      <tr style="font-size:17px">数组</tr>
+      <tr>
+        <td style="width:80px">属性名</td>
+        <td style="width:80px">说明</td>
+        <td>是否非空</td>
+      </tr>
+      <tr>
+        <td>name</td>
+        <td>名字</td>
+        <td>false</td>
+      </tr>
+      <tr>
+        <td>name</td>
+        <td>渠道</td>
+        <td style="color: red">true</td>
+      </tr>
+      <tr>
+        <td>gender</td>
+        <td>性别</td>
+        <td>false</td>
+      </tr>
+    </table> -->
   </el-dialog>
 </div>
 </template>
@@ -310,6 +334,7 @@ export default {
           manageApi.changeStatus(info)
         }).then(() => {
           window.importDia = false
+          this.$message('导入成功')
         })
       }
     },

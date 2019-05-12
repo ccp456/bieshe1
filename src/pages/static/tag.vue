@@ -206,7 +206,7 @@ export default {
         this.tableData = data
         let pie = this.bussi.series[0].data
         data.forEach(item => {
-          if (item._id.length >= 10) this.movie.xAxis.data.push(item._id.substr(0,10) + '...')
+          if (item._id.length >= 5) this.movie.xAxis.data.push(item._id.substr(0,5) + '...')
           else this.movie.xAxis.data.push(item._id)
           this.movie.series[0].data.push(item.alipay)
           this.movie.series[1].data.push(item.maoyan)
@@ -216,7 +216,7 @@ export default {
           pie[1].value += item.maoyan
           pie[2].value += item.active
           pie[3].value += item.offline
-        })
+        }) 
         console.log(this.movie)
       })
     },

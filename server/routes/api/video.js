@@ -12,15 +12,44 @@ const Hall = require('../../models/hall')
 const Paipian = require('../../models/paipian')
 
 router.post('/importData', async (ctx, next) => {
-  console.log(ctx.request.body)
   let base = ctx.request.body
   let sell = ctx.request.body.data
   if (sell.length < 0) ctx.body = 'f'
   else {
+    let alipay = 0
+    let maoyan = 0
+    let active = 0
+    let offline = 0
+    for (var i of sell) {
+      if (i.type) {
+        if (i.type === '支付宝') alipay += 1
+        if (i.type === '猫眼电影') maoyan += 1
+        if (i.type === '活动') active += 1
+        if (i.type === '线下') offline += 1
+      } else ctx.body = '格式错误'
+    }
+    const hall = await Hall.find({name: base.info})
+    // console.log(alipay)
+    const cinema = await Cinema.find({
+      cinema: base.info.cinema
+    })
+    // console.log(cinema)
+    const mc = await Movie.find({
+      mname: base.info.mname,
+      city: cinema[0].city
+    })
+    console.log(mc)
+    let up = mc[0]
+    up.alipay += alipay
+    up.maoyan += maoyan
+    up.active += active
+    up.offline += offline
+    up.update = new Date()
+    up.save()
     let data = new Importdata({
       mname: base.info.mname,
       cinema: base.info.cinema,
-      ptime: base.info.ptime,
+      time: base.info.ptime,
       hall: base.info.hall,
       sale: sell.length
     })

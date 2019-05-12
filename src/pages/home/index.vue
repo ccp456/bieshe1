@@ -125,6 +125,7 @@ export default {
     crawApi.getNewmovie().then(response => {
       // console.log(response)
       this.newmovies = response.data
+      console.log(response)
     }).catch(error => {
       console.error
     }),
